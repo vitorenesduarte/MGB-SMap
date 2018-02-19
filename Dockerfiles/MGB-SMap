@@ -1,0 +1,16 @@
+FROM openjdk:8-slim
+
+MAINTAINER TFR <tfr011@gmail.com>
+
+
+ENV NAME=mgb-smap
+ENV JAR=$NAME-0.1-SNAPSHOT.jar
+
+ADD target/$JAR $NAME/
+
+WORKDIR $NAME
+
+CMD java -jar $JAR host=${HOST} \
+                   port=${PORT} \
+                   clients=${CLIENTS} \
+                   zk=${ZK}

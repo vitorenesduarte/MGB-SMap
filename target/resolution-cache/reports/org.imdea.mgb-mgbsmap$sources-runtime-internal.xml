@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="org.imdea.mgb"
+		module="mgbsmap$sources"
+		revision="0.1-SNAPSHOT"
+		conf="runtime-internal"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
+		date="20180212094039"/>
+	<dependencies>
+		<module organisation="org.kohsuke.args4j" name="args4j-maven-plugin">
+			<revision name="2.32" status="release" pubdate="20150323052756" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="34">
+				<license name="MIT License" url="http://www.opensource.org/licenses/mit-license.php"/>
+				<metadata-artifact status="no" details="" size="4223" time="0" location="/home/tuanir/.ivy2/cache/org.kohsuke.args4j/args4j-maven-plugin/ivy-2.32.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/kohsuke/args4j/args4j-maven-plugin/2.32/args4j-maven-plugin-2.32.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.32" rev-constraint-default="2.32" rev-constraint-dynamic="2.32" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="args4j-maven-plugin" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="2245" time="0" location="/home/tuanir/.ivy2/cache/org.kohsuke.args4j/args4j-maven-plugin/srcs/args4j-maven-plugin-2.32-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/kohsuke/args4j/args4j-maven-plugin/2.32/args4j-maven-plugin-2.32-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.zookeeper" name="zookeeper">
+			<revision name="3.4.10" status="release" pubdate="20170323130836" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="32">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="7270" time="0" location="/home/tuanir/.ivy2/cache/org.apache.zookeeper/zookeeper/ivy-3.4.10.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/zookeeper/zookeeper/3.4.10/zookeeper-3.4.10.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="3.4.10" rev-constraint-default="3.4.10" rev-constraint-dynamic="3.4.10" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="zookeeper" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="592940" time="0" location="/home/tuanir/.ivy2/cache/org.apache.zookeeper/zookeeper/srcs/zookeeper-3.4.10-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/zookeeper/zookeeper/3.4.10/zookeeper-3.4.10-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="args4j" name="args4j-tools">
+			<revision name="2.32" status="release" pubdate="20150323052721" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="31">
+				<license name="MIT License" url="http://www.opensource.org/licenses/mit-license.php"/>
+				<metadata-artifact status="no" details="" size="4205" time="0" location="/home/tuanir/.ivy2/cache/args4j/args4j-tools/ivy-2.32.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/args4j/args4j-tools/2.32/args4j-tools-2.32.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.32" rev-constraint-default="2.32" rev-constraint-dynamic="2.32" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="args4j-tools" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="8876" time="0" location="/home/tuanir/.ivy2/cache/args4j/args4j-tools/srcs/args4j-tools-2.32-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/args4j/args4j-tools/2.32/args4j-tools-2.32-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="redis.clients" name="jedis">
+			<revision name="2.9.0" status="release" pubdate="20160722145339" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/xetorthio/jedis" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="30">
+				<license name="MIT" url="http://github.com/xetorthio/jedis/raw/master/LICENSE.txt"/>
+				<metadata-artifact status="no" details="" size="4161" time="0" location="/home/tuanir/.ivy2/cache/redis.clients/jedis/ivy-2.9.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/redis/clients/jedis/2.9.0/jedis-2.9.0.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.9.0" rev-constraint-default="2.9.0" rev-constraint-dynamic="2.9.0" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="jedis" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="156665" time="0" location="/home/tuanir/.ivy2/cache/redis.clients/jedis/srcs/jedis-2.9.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/redis/clients/jedis/2.9.0/jedis-2.9.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.github.os72" name="protoc-jar">
+			<revision name="3.4.0" status="release" pubdate="20170830034819" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/os72/protoc-jar" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="25">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3286" time="0" location="/home/tuanir/.ivy2/cache/com.github.os72/protoc-jar/ivy-3.4.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/github/os72/protoc-jar/3.4.0/protoc-jar-3.4.0.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="3.4.0" rev-constraint-default="3.4.0" rev-constraint-dynamic="3.4.0" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="protoc-jar" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="66573" time="0" location="/home/tuanir/.ivy2/cache/com.github.os72/protoc-jar/srcs/protoc-jar-3.4.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/github/os72/protoc-jar/3.4.0/protoc-jar-3.4.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.slf4j" name="slf4j-log4j12">
+			<revision name="1.6.1" status="release" pubdate="20100705223004" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.slf4j.org" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="24">
+				<license name="MIT License" url="http://www.opensource.org/licenses/mit-license.php"/>
+				<metadata-artifact status="no" details="" size="4229" time="0" location="/home/tuanir/.ivy2/cache/org.slf4j/slf4j-log4j12/ivy-1.6.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.6.1" rev-constraint-default="1.6.1" rev-constraint-dynamic="1.6.1" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="slf4j-log4j12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="9549" time="0" location="/home/tuanir/.ivy2/cache/org.slf4j/slf4j-log4j12/srcs/slf4j-log4j12-1.6.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.commons" name="commons-pool2">
+			<revision name="2.4.2" status="release" pubdate="20150729042011" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://commons.apache.org/proper/commons-pool/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="22">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="10663" time="0" location="/home/tuanir/.ivy2/cache/org.apache.commons/commons-pool2/ivy-2.4.2.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.4.2" rev-constraint-default="2.4.2" rev-constraint-dynamic="2.4.2" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="commons-pool2" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="117433" time="0" location="/home/tuanir/.ivy2/cache/org.apache.commons/commons-pool2/srcs/commons-pool2-2.4.2-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-project">
+			<revision name="2.0.4" status="release" pubdate="20060508003115" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="19">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="5094" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-project/ivy-2.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0.4" rev-constraint-default="2.0.4" rev-constraint-dynamic="2.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-project" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="82114" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-project/srcs/maven-project-2.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-settings">
+			<revision name="2.0.4" status="release" pubdate="20060508003111" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="20">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="4291" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-settings/ivy-2.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0.4" rev-constraint-default="2.0.4" rev-constraint-dynamic="2.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-settings" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="30869" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-settings/srcs/maven-settings-2.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="jline" name="jline">
+			<revision name="0.9.94" status="release" pubdate="20080222205343" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://jline.sourceforge.net" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="17">
+				<license name="BSD" url="LICENSE.txt"/>
+				<metadata-artifact status="no" details="" size="2968" time="0" location="/home/tuanir/.ivy2/cache/jline/jline/ivy-0.9.94.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/jline/jline/0.9.94/jline-0.9.94.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="0.9.94" rev-constraint-default="0.9.94" rev-constraint-dynamic="0.9.94" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="jline" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="76456" time="0" location="/home/tuanir/.ivy2/cache/jline/jline/srcs/jline-0.9.94-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/jline/jline/0.9.94/jline-0.9.94-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalatest" name="scalatest_2.12">
+			<revision name="3.0.1" status="release" pubdate="20161110065252" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scalatest.org" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="14">
+				<license name="the Apache License, ASL Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="5287" time="0" location="/home/tuanir/.ivy2/cache/org.scalatest/scalatest_2.12/ivy-3.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="3.0.1" rev-constraint-default="3.0.1" rev-constraint-dynamic="3.0.1" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scalatest_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1643660" time="0" location="/home/tuanir/.ivy2/cache/org.scalatest/scalatest_2.12/srcs/scalatest_2.12-3.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/3.0.1/scalatest_2.12-3.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang.modules" name="scala-parser-combinators_2.12">
+			<revision name="1.0.4" status="release" pubdate="20161029011045" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="23">
+				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="2785" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.12/ivy-1.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.12/1.0.4/scala-parser-combinators_2.12-1.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.0.4" rev-constraint-default="1.0.4" rev-constraint-dynamic="1.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scala-parser-combinators_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="42274" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang.modules/scala-parser-combinators_2.12/srcs/scala-parser-combinators_2.12-1.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.12/1.0.4/scala-parser-combinators_2.12-1.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang.modules" name="scala-xml_2.12">
+			<revision name="1.0.5" status="release" pubdate="20161029011007" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="29">
+				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="3137" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang.modules/scala-xml_2.12/ivy-1.0.5.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.12/1.0.5/scala-xml_2.12-1.0.5.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.0.5" rev-constraint-default="1.0.5" rev-constraint-dynamic="1.0.5" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scala-xml_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="109241" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang.modules/scala-xml_2.12/srcs/scala-xml_2.12-1.0.5-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.12/1.0.5/scala-xml_2.12-1.0.5-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalactic" name="scalactic_2.12">
+			<revision name="3.0.1" status="release" pubdate="20161110065016" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scalatest.org" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="36">
+				<license name="the Apache License, ASL Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2967" time="0" location="/home/tuanir/.ivy2/cache/org.scalactic/scalactic_2.12/ivy-3.0.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="3.0.1" rev-constraint-default="3.0.1" rev-constraint-dynamic="3.0.1" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scalactic_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="201082" time="0" location="/home/tuanir/.ivy2/cache/org.scalactic/scalactic_2.12/srcs/scalactic_2.12-3.0.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scalactic/scalactic_2.12/3.0.1/scalactic_2.12-3.0.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-plugin-api">
+			<revision name="2.0" status="release" pubdate="20060508003124" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="12">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3569" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-plugin-api/ivy-2.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-plugin-api/2.0/maven-plugin-api-2.0.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0" rev-constraint-default="2.0" rev-constraint-dynamic="2.0" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-plugin-api" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="7087" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-plugin-api/srcs/maven-plugin-api-2.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-plugin-api/2.0/maven-plugin-api-2.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="args4j" name="args4j">
+			<revision name="2.32" status="release" pubdate="20150323052654" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="11">
+				<license name="MIT License" url="http://www.opensource.org/licenses/mit-license.php"/>
+				<metadata-artifact status="no" details="" size="3709" time="0" location="/home/tuanir/.ivy2/cache/args4j/args4j/ivy-2.32.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/args4j/args4j/2.32/args4j-2.32.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.32" rev-constraint-default="2.32" rev-constraint-dynamic="2.32" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="args4j" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="65381" time="0" location="/home/tuanir/.ivy2/cache/args4j/args4j/srcs/args4j-2.32-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/args4j/args4j/2.32/args4j-2.32-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-profile">
+			<revision name="2.0.4" status="release" pubdate="20060508003115" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="10">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="4289" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-profile/ivy-2.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0.4" rev-constraint-default="2.0.4" rev-constraint-dynamic="2.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-profile" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="20490" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-profile/srcs/maven-profile-2.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-model">
+			<revision name="2.0.4" status="release" pubdate="20060508003127" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="35">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="4000" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-model/ivy-2.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0.4" rev-constraint-default="2.0.4" rev-constraint-dynamic="2.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-model" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="64590" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-model/srcs/maven-model-2.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.google.protobuf" name="protobuf-java">
+			<revision name="3.4.0" status="release" pubdate="20170816000745" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="9">
+				<license name="3-Clause BSD License" url="https://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="5084" time="0" location="/home/tuanir/.ivy2/cache/com.google.protobuf/protobuf-java/ivy-3.4.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.4.0/protobuf-java-3.4.0.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="3.4.0" rev-constraint-default="3.4.0" rev-constraint-dynamic="3.4.0" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="protobuf-java" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="681816" time="0" location="/home/tuanir/.ivy2/cache/com.google.protobuf/protobuf-java/srcs/protobuf-java-3.4.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.4.0/protobuf-java-3.4.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-artifact-manager">
+			<revision name="2.0.4" status="release" pubdate="20060508003133" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="8">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="4676" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-artifact-manager/ivy-2.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0.4" rev-constraint-default="2.0.4" rev-constraint-dynamic="2.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-artifact-manager" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="40581" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-artifact-manager/srcs/maven-artifact-manager-2.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-repository-metadata">
+			<revision name="2.0.4" status="release" pubdate="20060508003114" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="27">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="4037" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-repository-metadata/ivy-2.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0.4" rev-constraint-default="2.0.4" rev-constraint-dynamic="2.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-repository-metadata" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="11689" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-repository-metadata/srcs/maven-repository-metadata-2.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven" name="maven-artifact">
+			<revision name="2.0.4" status="release" pubdate="20060508003136" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="6">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="4029" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-artifact/ivy-2.0.4.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.0.4" rev-constraint-default="2.0.4" rev-constraint-dynamic="2.0.4" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="maven-artifact" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="74807" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven/maven-artifact/srcs/maven-artifact-2.0.4-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.codehaus.plexus" name="plexus-utils">
+			<revision name="1.1" status="release" pubdate="20060112052235" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="13">
+				<metadata-artifact status="no" details="" size="2644" time="0" location="/home/tuanir/.ivy2/cache/org.codehaus.plexus/plexus-utils/ivy-1.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.1" rev-constraint-default="1.1" rev-constraint-dynamic="1.1" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="plexus-utils" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="190807" time="0" location="/home/tuanir/.ivy2/cache/org.codehaus.plexus/plexus-utils/srcs/plexus-utils-1.1-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe.akka" name="akka-actor_2.12">
+			<revision name="2.5.9" status="release" pubdate="20180111161020" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://akka.io/" extra-info.apiURL="http://doc.akka.io/api/akka/2.5.9" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="5">
+				<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="3099" time="0" location="/home/tuanir/.ivy2/cache/com.typesafe.akka/akka-actor_2.12/ivy-2.5.9.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.12/2.5.9/akka-actor_2.12-2.5.9.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.5.9" rev-constraint-default="2.5.9" rev-constraint-dynamic="2.5.9" callerrev="0.1-SNAPSHOT" extra-info.apiURL="http://doc.akka.io/api/akka/2.5.9"/>
+				<artifacts>
+					<artifact name="akka-actor_2.12" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="523028" time="107" location="/home/tuanir/.ivy2/cache/com.typesafe.akka/akka-actor_2.12/srcs/akka-actor_2.12-2.5.9-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.12/2.5.9/akka-actor_2.12-2.5.9-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang.modules" name="scala-java8-compat_2.12">
+			<revision name="0.8.0" status="release" pubdate="20161030001227" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="37">
+				<license name="BSD 3-clause" url="http://opensource.org/licenses/BSD-3-Clause"/>
+				<metadata-artifact status="no" details="" size="3036" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang.modules/scala-java8-compat_2.12/ivy-0.8.0.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-java8-compat_2.12/0.8.0/scala-java8-compat_2.12-0.8.0.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="0.8.0" rev-constraint-default="0.8.0" rev-constraint-dynamic="0.8.0" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scala-java8-compat_2.12" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="63853" time="69" location="/home/tuanir/.ivy2/cache/org.scala-lang.modules/scala-java8-compat_2.12/srcs/scala-java8-compat_2.12-0.8.0-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/modules/scala-java8-compat_2.12/0.8.0/scala-java8-compat_2.12-0.8.0-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe" name="config">
+			<revision name="1.3.2" status="release" pubdate="20171006160218" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/typesafehub/config" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="7">
+				<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2875" time="0" location="/home/tuanir/.ivy2/cache/com.typesafe/config/ivy-1.3.2.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/typesafe/config/1.3.2/config-1.3.2.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.3.2" rev-constraint-default="1.3.2" rev-constraint-dynamic="1.3.2" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="config" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="172766" time="50" location="/home/tuanir/.ivy2/cache/com.typesafe/config/srcs/config-1.3.2-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/typesafe/config/1.3.2/config-1.3.2-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-reflect">
+			<revision name="2.12.3" status="release" pubdate="20170725124444" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.12.3/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="4">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2637" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang/scala-reflect/ivy-2.12.3.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.12.3/scala-reflect-2.12.3.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.12.3" rev-constraint-default="2.12.3" rev-constraint-dynamic="2.12.3" callerrev="0.1-SNAPSHOT" extra-info.apiURL="http://www.scala-lang.org/api/2.12.3/"/>
+				<artifacts>
+					<artifact name="scala-reflect" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="577394" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang/scala-reflect/srcs/scala-reflect-2.12.3-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.12.3/scala-reflect-2.12.3-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-library">
+			<revision name="2.12.3" status="release" pubdate="20170725124730" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" extra-info.apiURL="http://www.scala-lang.org/api/2.12.3/" downloaded="false" searched="false" default="false" conf="default, master(*), compile, runtime(*), master(compile), runtime, default(compile), compile(*), master" position="16">
+				<license name="BSD 3-Clause" url="http://www.scala-lang.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2471" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang/scala-library/ivy-2.12.3.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.3/scala-library-2.12.3.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="2.12.3" rev-constraint-default="2.12.3" rev-constraint-dynamic="2.12.3" callerrev="0.1-SNAPSHOT" extra-info.apiURL="http://www.scala-lang.org/api/2.12.3/"/>
+				<artifacts>
+					<artifact name="scala-library" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="990602" time="0" location="/home/tuanir/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.3-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.3/scala-library-2.12.3-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.netty" name="netty">
+			<revision name="3.10.5.Final" status="release" pubdate="20151013121258" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://netty.io/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="3">
+				<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="7197" time="0" location="/home/tuanir/.ivy2/cache/io.netty/netty/ivy-3.10.5.Final.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/io/netty/netty/3.10.5.Final/netty-3.10.5.Final.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="3.10.5.Final" rev-constraint-default="3.10.5.Final" rev-constraint-dynamic="3.10.5.Final" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="netty" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1154000" time="0" location="/home/tuanir/.ivy2/cache/io.netty/netty/srcs/netty-3.10.5.Final-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/io/netty/netty/3.10.5.Final/netty-3.10.5.Final-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="log4j" name="log4j">
+			<revision name="1.2.16" status="release" pubdate="20100331062544" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://logging.apache.org/log4j/1.2/" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="21">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3492" time="0" location="/home/tuanir/.ivy2/cache/log4j/log4j/ivy-1.2.16.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/log4j/log4j/1.2.16/log4j-1.2.16.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.2.16" rev-constraint-default="1.2.16" rev-constraint-dynamic="1.2.16" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="log4j" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="471225" time="0" location="/home/tuanir/.ivy2/cache/log4j/log4j/srcs/log4j-1.2.16-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/log4j/log4j/1.2.16/log4j-1.2.16-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe.scala-logging" name="scala-logging_2.12">
+			<revision name="3.7.2" status="release" pubdate="20170721153837" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/typesafehub/scala-logging" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="2">
+				<license name="Apache 2.0 License" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+				<metadata-artifact status="no" details="" size="3354" time="0" location="/home/tuanir/.ivy2/cache/com.typesafe.scala-logging/scala-logging_2.12/ivy-3.7.2.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/com/typesafe/scala-logging/scala-logging_2.12/3.7.2/scala-logging_2.12-3.7.2.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="3.7.2" rev-constraint-default="3.7.2" rev-constraint-dynamic="3.7.2" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="scala-logging_2.12" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="9121" time="0" location="/home/tuanir/.ivy2/cache/com.typesafe.scala-logging/scala-logging_2.12/srcs/scala-logging_2.12-3.7.2-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/com/typesafe/scala-logging/scala-logging_2.12/3.7.2/scala-logging_2.12-3.7.2-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="ch.qos.logback" name="logback-classic">
+			<revision name="1.2.3" status="release" pubdate="20170331212753" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="15">
+				<license name="Eclipse Public License - v 1.0" url="http://www.eclipse.org/legal/epl-v10.html"/>
+				<license name="GNU Lesser General Public License" url="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html"/>
+				<metadata-artifact status="no" details="" size="10412" time="0" location="/home/tuanir/.ivy2/cache/ch.qos.logback/logback-classic/ivy-1.2.3.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.2.3" rev-constraint-default="1.2.3" rev-constraint-dynamic="1.2.3" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="logback-classic" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="230201" time="0" location="/home/tuanir/.ivy2/cache/ch.qos.logback/logback-classic/srcs/logback-classic-1.2.3-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="ch.qos.logback" name="logback-core">
+			<revision name="1.2.3" status="release" pubdate="20170331212715" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="33">
+				<license name="Eclipse Public License - v 1.0" url="http://www.eclipse.org/legal/epl-v10.html"/>
+				<license name="GNU Lesser General Public License" url="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html"/>
+				<metadata-artifact status="no" details="" size="7917" time="0" location="/home/tuanir/.ivy2/cache/ch.qos.logback/logback-core/ivy-1.2.3.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/ch/qos/logback/logback-core/1.2.3/logback-core-1.2.3.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.2.3" rev-constraint-default="1.2.3" rev-constraint-dynamic="1.2.3" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="logback-core" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="399141" time="0" location="/home/tuanir/.ivy2/cache/ch.qos.logback/logback-core/srcs/logback-core-1.2.3-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/ch/qos/logback/logback-core/1.2.3/logback-core-1.2.3-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.slf4j" name="slf4j-api">
+			<revision name="1.7.25" status="release" pubdate="20170316173632" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.slf4j.org" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="18">
+				<metadata-artifact status="no" details="" size="5287" time="0" location="/home/tuanir/.ivy2/cache/org.slf4j/slf4j-api/ivy-1.7.25.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.7.25" rev-constraint-default="1.7.25" rev-constraint-dynamic="1.7.25" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="slf4j-api" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="55539" time="0" location="/home/tuanir/.ivy2/cache/org.slf4j/slf4j-api/srcs/slf4j-api-1.7.25-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="junit" name="junit">
+			<revision name="4.12" status="release" pubdate="20141204171743" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://junit.org" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="26">
+				<license name="Eclipse Public License 1.0" url="http://www.eclipse.org/legal/epl-v10.html"/>
+				<metadata-artifact status="no" details="" size="3317" time="0" location="/home/tuanir/.ivy2/cache/junit/junit/ivy-4.12.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/junit/junit/4.12/junit-4.12.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="4.12" rev-constraint-default="4.12" rev-constraint-dynamic="4.12" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="junit" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="200355" time="0" location="/home/tuanir/.ivy2/cache/junit/junit/srcs/junit-4.12-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/junit/junit/4.12/junit-4.12-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.hamcrest" name="hamcrest-core">
+			<revision name="1.3" status="release" pubdate="20120709230802" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="28">
+				<license name="New BSD License" url="http://www.opensource.org/licenses/bsd-license.php"/>
+				<metadata-artifact status="no" details="" size="2617" time="0" location="/home/tuanir/.ivy2/cache/org.hamcrest/hamcrest-core/ivy-1.3.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.3" rev-constraint-default="1.3" rev-constraint-dynamic="1.3" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="hamcrest-core" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="32624" time="0" location="/home/tuanir/.ivy2/cache/org.hamcrest/hamcrest-core/srcs/hamcrest-core-1.3-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.maven.wagon" name="wagon-provider-api">
+			<revision name="1.0-alpha-6" status="release" pubdate="20060508003122" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="1">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3528" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven.wagon/wagon-provider-api/ivy-1.0-alpha-6.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/apache/maven/wagon/wagon-provider-api/1.0-alpha-6/wagon-provider-api-1.0-alpha-6.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.0-alpha-6" rev-constraint-default="1.0-alpha-6" rev-constraint-dynamic="1.0-alpha-6" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="wagon-provider-api" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="46699" time="0" location="/home/tuanir/.ivy2/cache/org.apache.maven.wagon/wagon-provider-api/srcs/wagon-provider-api-1.0-alpha-6-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/apache/maven/wagon/wagon-provider-api/1.0-alpha-6/wagon-provider-api-1.0-alpha-6-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.codehaus.plexus" name="plexus-container-default">
+			<revision name="1.0-alpha-9" status="release" pubdate="20051208003520" resolver="sbt-chain" artresolver="sbt-chain" homepage="" downloaded="false" searched="false" default="false" conf="compile, runtime(*), master(compile), runtime, compile(*), master" position="0">
+				<metadata-artifact status="no" details="" size="3135" time="0" location="/home/tuanir/.ivy2/cache/org.codehaus.plexus/plexus-container-default/ivy-1.0-alpha-9.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-container-default/1.0-alpha-9/plexus-container-default-1.0-alpha-9.pom"/>
+				<caller organisation="org.imdea.mgb" name="mgbsmap$sources" conf="compile, runtime-internal, runtime, optional" rev="1.0-alpha-9" rev-constraint-default="1.0-alpha-9" rev-constraint-dynamic="1.0-alpha-9" callerrev="0.1-SNAPSHOT"/>
+				<artifacts>
+					<artifact name="plexus-container-default" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="185573" time="0" location="/home/tuanir/.ivy2/cache/org.codehaus.plexus/plexus-container-default/srcs/plexus-container-default-1.0-alpha-9-sources.jar">
+						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-container-default/1.0-alpha-9/plexus-container-default-1.0-alpha-9-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>

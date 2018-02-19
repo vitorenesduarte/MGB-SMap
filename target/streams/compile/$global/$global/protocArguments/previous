@@ -1,0 +1,1 @@
+["sbt.Task[sbtprotoc.ProtocPlugin$Arguments]",[["file:/home/tuanir/src/MGB-SMap/src/main/protobuf/","file:/home/tuanir/src/MGB-SMap/target/protobuf_external/"],[],"python",true,[["file:/home/tuanir/src/MGB-SMap/target/src_managed/main/",[]],["file:/home/tuanir/src/MGB-SMap/target/src_managed/main/",["java_conversions","grpc"]]]]]
