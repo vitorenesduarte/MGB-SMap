@@ -1,0 +1,3 @@
+# MGB-SMap
+
+sbt compile
