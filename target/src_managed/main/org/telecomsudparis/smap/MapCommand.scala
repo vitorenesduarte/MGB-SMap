@@ -9,21 +9,23 @@ package org.telecomsudparis.smap
 
 @SerialVersionUID(0L)
 final case class MapCommand(
-    uuid: String = "",
-    key: _root_.com.google.protobuf.ByteString = _root_.com.google.protobuf.ByteString.EMPTY,
-    data: _root_.com.google.protobuf.ByteString = _root_.com.google.protobuf.ByteString.EMPTY,
-    pure: Boolean = false,
-    sender: String = ""
+    item: scala.Option[org.telecomsudparis.smap.Item] = None,
+    startKey: String = "",
+    recordcount: Int = 0,
+    callerId: String = "",
+    operationUuid: String = "",
+    operationType: org.telecomsudparis.smap.MapCommand.OperationType = org.telecomsudparis.smap.MapCommand.OperationType.INSERT
     ) extends com.trueaccord.scalapb.GeneratedMessage with com.trueaccord.scalapb.Message[MapCommand] with com.trueaccord.lenses.Updatable[MapCommand] {
     @transient
     private[this] var __serializedSizeCachedValue: Int = 0
     private[this] def __computeSerializedValue(): Int = {
       var __size = 0
-      if (uuid != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(1, uuid) }
-      if (key != _root_.com.google.protobuf.ByteString.EMPTY) { __size += _root_.com.google.protobuf.CodedOutputStream.computeBytesSize(2, key) }
-      if (data != _root_.com.google.protobuf.ByteString.EMPTY) { __size += _root_.com.google.protobuf.CodedOutputStream.computeBytesSize(3, data) }
-      if (pure != false) { __size += _root_.com.google.protobuf.CodedOutputStream.computeBoolSize(4, pure) }
-      if (sender != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(5, sender) }
+      if (item.isDefined) { __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(item.get.serializedSize) + item.get.serializedSize }
+      if (startKey != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(2, startKey) }
+      if (recordcount != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeInt32Size(3, recordcount) }
+      if (callerId != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(4, callerId) }
+      if (operationUuid != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(5, operationUuid) }
+      if (operationType != org.telecomsudparis.smap.MapCommand.OperationType.INSERT) { __size += _root_.com.google.protobuf.CodedOutputStream.computeEnumSize(6, operationType.value) }
       __size
     }
     final override def serializedSize: Int = {
@@ -35,106 +37,120 @@ final case class MapCommand(
       read
     }
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
+      item.foreach { __v =>
+        _output__.writeTag(1, 2)
+        _output__.writeUInt32NoTag(__v.serializedSize)
+        __v.writeTo(_output__)
+      };
       {
-        val __v = uuid
+        val __v = startKey
         if (__v != "") {
-          _output__.writeString(1, __v)
+          _output__.writeString(2, __v)
         }
       };
       {
-        val __v = key
-        if (__v != _root_.com.google.protobuf.ByteString.EMPTY) {
-          _output__.writeBytes(2, __v)
+        val __v = recordcount
+        if (__v != 0) {
+          _output__.writeInt32(3, __v)
         }
       };
       {
-        val __v = data
-        if (__v != _root_.com.google.protobuf.ByteString.EMPTY) {
-          _output__.writeBytes(3, __v)
+        val __v = callerId
+        if (__v != "") {
+          _output__.writeString(4, __v)
         }
       };
       {
-        val __v = pure
-        if (__v != false) {
-          _output__.writeBool(4, __v)
-        }
-      };
-      {
-        val __v = sender
+        val __v = operationUuid
         if (__v != "") {
           _output__.writeString(5, __v)
         }
       };
+      {
+        val __v = operationType
+        if (__v != org.telecomsudparis.smap.MapCommand.OperationType.INSERT) {
+          _output__.writeEnum(6, __v.value)
+        }
+      };
     }
     def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): org.telecomsudparis.smap.MapCommand = {
-      var __uuid = this.uuid
-      var __key = this.key
-      var __data = this.data
-      var __pure = this.pure
-      var __sender = this.sender
+      var __item = this.item
+      var __startKey = this.startKey
+      var __recordcount = this.recordcount
+      var __callerId = this.callerId
+      var __operationUuid = this.operationUuid
+      var __operationType = this.operationType
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
         _tag__ match {
           case 0 => _done__ = true
           case 10 =>
-            __uuid = _input__.readString()
+            __item = Some(_root_.com.trueaccord.scalapb.LiteParser.readMessage(_input__, __item.getOrElse(org.telecomsudparis.smap.Item.defaultInstance)))
           case 18 =>
-            __key = _input__.readBytes()
-          case 26 =>
-            __data = _input__.readBytes()
-          case 32 =>
-            __pure = _input__.readBool()
+            __startKey = _input__.readString()
+          case 24 =>
+            __recordcount = _input__.readInt32()
+          case 34 =>
+            __callerId = _input__.readString()
           case 42 =>
-            __sender = _input__.readString()
+            __operationUuid = _input__.readString()
+          case 48 =>
+            __operationType = org.telecomsudparis.smap.MapCommand.OperationType.fromValue(_input__.readEnum())
           case tag => _input__.skipField(tag)
         }
       }
       org.telecomsudparis.smap.MapCommand(
-          uuid = __uuid,
-          key = __key,
-          data = __data,
-          pure = __pure,
-          sender = __sender
+          item = __item,
+          startKey = __startKey,
+          recordcount = __recordcount,
+          callerId = __callerId,
+          operationUuid = __operationUuid,
+          operationType = __operationType
       )
     }
-    def withUuid(__v: String): MapCommand = copy(uuid = __v)
-    def withKey(__v: _root_.com.google.protobuf.ByteString): MapCommand = copy(key = __v)
-    def withData(__v: _root_.com.google.protobuf.ByteString): MapCommand = copy(data = __v)
-    def withPure(__v: Boolean): MapCommand = copy(pure = __v)
-    def withSender(__v: String): MapCommand = copy(sender = __v)
+    def getItem: org.telecomsudparis.smap.Item = item.getOrElse(org.telecomsudparis.smap.Item.defaultInstance)
+    def clearItem: MapCommand = copy(item = None)
+    def withItem(__v: org.telecomsudparis.smap.Item): MapCommand = copy(item = Some(__v))
+    def withStartKey(__v: String): MapCommand = copy(startKey = __v)
+    def withRecordcount(__v: Int): MapCommand = copy(recordcount = __v)
+    def withCallerId(__v: String): MapCommand = copy(callerId = __v)
+    def withOperationUuid(__v: String): MapCommand = copy(operationUuid = __v)
+    def withOperationType(__v: org.telecomsudparis.smap.MapCommand.OperationType): MapCommand = copy(operationType = __v)
     def getFieldByNumber(__fieldNumber: Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 1 => {
-          val __t = uuid
-          if (__t != "") __t else null
-        }
+        case 1 => item.orNull
         case 2 => {
-          val __t = key
-          if (__t != _root_.com.google.protobuf.ByteString.EMPTY) __t else null
+          val __t = startKey
+          if (__t != "") __t else null
         }
         case 3 => {
-          val __t = data
-          if (__t != _root_.com.google.protobuf.ByteString.EMPTY) __t else null
+          val __t = recordcount
+          if (__t != 0) __t else null
         }
         case 4 => {
-          val __t = pure
-          if (__t != false) __t else null
+          val __t = callerId
+          if (__t != "") __t else null
         }
         case 5 => {
-          val __t = sender
+          val __t = operationUuid
           if (__t != "") __t else null
+        }
+        case 6 => {
+          val __t = operationType.javaValueDescriptor
+          if (__t.getNumber() != 0) __t else null
         }
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 1 => _root_.scalapb.descriptors.PString(uuid)
-        case 2 => _root_.scalapb.descriptors.PByteString(key)
-        case 3 => _root_.scalapb.descriptors.PByteString(data)
-        case 4 => _root_.scalapb.descriptors.PBoolean(pure)
-        case 5 => _root_.scalapb.descriptors.PString(sender)
+        case 1 => item.map(_.toPMessage).getOrElse(_root_.scalapb.descriptors.PEmpty)
+        case 2 => _root_.scalapb.descriptors.PString(startKey)
+        case 3 => _root_.scalapb.descriptors.PInt(recordcount)
+        case 4 => _root_.scalapb.descriptors.PString(callerId)
+        case 5 => _root_.scalapb.descriptors.PString(operationUuid)
+        case 6 => _root_.scalapb.descriptors.PEnum(operationType.scalaValueDescriptor)
       }
     }
     override def toString: String = _root_.com.trueaccord.scalapb.TextFormat.printToUnicodeString(this)
@@ -145,48 +161,62 @@ object MapCommand extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.t
   implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.MapCommand] with com.trueaccord.scalapb.JavaProtoSupport[org.telecomsudparis.smap.MapCommand, pb.Smap.MapCommand] = this
   def toJavaProto(scalaPbSource: org.telecomsudparis.smap.MapCommand): pb.Smap.MapCommand = {
     val javaPbOut = pb.Smap.MapCommand.newBuilder
-    javaPbOut.setUuid(scalaPbSource.uuid)
-    javaPbOut.setKey(scalaPbSource.key)
-    javaPbOut.setData(scalaPbSource.data)
-    javaPbOut.setPure(scalaPbSource.pure)
-    javaPbOut.setSender(scalaPbSource.sender)
+    scalaPbSource.item.map(org.telecomsudparis.smap.Item.toJavaProto).foreach(javaPbOut.setItem)
+    javaPbOut.setStartKey(scalaPbSource.startKey)
+    javaPbOut.setRecordcount(scalaPbSource.recordcount)
+    javaPbOut.setCallerId(scalaPbSource.callerId)
+    javaPbOut.setOperationUuid(scalaPbSource.operationUuid)
+    javaPbOut.setOperationTypeValue(scalaPbSource.operationType.value)
     javaPbOut.build
   }
   def fromJavaProto(javaPbSource: pb.Smap.MapCommand): org.telecomsudparis.smap.MapCommand = org.telecomsudparis.smap.MapCommand(
-    uuid = javaPbSource.getUuid,
-    key = javaPbSource.getKey,
-    data = javaPbSource.getData,
-    pure = javaPbSource.getPure.booleanValue,
-    sender = javaPbSource.getSender
+    item = if (javaPbSource.hasItem) Some(org.telecomsudparis.smap.Item.fromJavaProto(javaPbSource.getItem)) else None,
+    startKey = javaPbSource.getStartKey,
+    recordcount = javaPbSource.getRecordcount.intValue,
+    callerId = javaPbSource.getCallerId,
+    operationUuid = javaPbSource.getOperationUuid,
+    operationType = org.telecomsudparis.smap.MapCommand.OperationType.fromJavaValue(javaPbSource.getOperationType)
   )
   def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): org.telecomsudparis.smap.MapCommand = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
     org.telecomsudparis.smap.MapCommand(
-      __fieldsMap.getOrElse(__fields.get(0), "").asInstanceOf[String],
-      __fieldsMap.getOrElse(__fields.get(1), _root_.com.google.protobuf.ByteString.EMPTY).asInstanceOf[_root_.com.google.protobuf.ByteString],
-      __fieldsMap.getOrElse(__fields.get(2), _root_.com.google.protobuf.ByteString.EMPTY).asInstanceOf[_root_.com.google.protobuf.ByteString],
-      __fieldsMap.getOrElse(__fields.get(3), false).asInstanceOf[Boolean],
-      __fieldsMap.getOrElse(__fields.get(4), "").asInstanceOf[String]
+      __fieldsMap.get(__fields.get(0)).asInstanceOf[scala.Option[org.telecomsudparis.smap.Item]],
+      __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[String],
+      __fieldsMap.getOrElse(__fields.get(2), 0).asInstanceOf[Int],
+      __fieldsMap.getOrElse(__fields.get(3), "").asInstanceOf[String],
+      __fieldsMap.getOrElse(__fields.get(4), "").asInstanceOf[String],
+      org.telecomsudparis.smap.MapCommand.OperationType.fromValue(__fieldsMap.getOrElse(__fields.get(5), org.telecomsudparis.smap.MapCommand.OperationType.INSERT.javaValueDescriptor).asInstanceOf[_root_.com.google.protobuf.Descriptors.EnumValueDescriptor].getNumber)
     )
   }
   implicit def messageReads: _root_.scalapb.descriptors.Reads[org.telecomsudparis.smap.MapCommand] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
       org.telecomsudparis.smap.MapCommand(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[String]).getOrElse(""),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[_root_.com.google.protobuf.ByteString]).getOrElse(_root_.com.google.protobuf.ByteString.EMPTY),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(3).get).map(_.as[_root_.com.google.protobuf.ByteString]).getOrElse(_root_.com.google.protobuf.ByteString.EMPTY),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(4).get).map(_.as[Boolean]).getOrElse(false),
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(5).get).map(_.as[String]).getOrElse("")
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).flatMap(_.as[scala.Option[org.telecomsudparis.smap.Item]]),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(2).get).map(_.as[String]).getOrElse(""),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(3).get).map(_.as[Int]).getOrElse(0),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(4).get).map(_.as[String]).getOrElse(""),
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(5).get).map(_.as[String]).getOrElse(""),
+        org.telecomsudparis.smap.MapCommand.OperationType.fromValue(__fieldsMap.get(scalaDescriptor.findFieldByNumber(6).get).map(_.as[_root_.scalapb.descriptors.EnumValueDescriptor]).getOrElse(org.telecomsudparis.smap.MapCommand.OperationType.INSERT.scalaValueDescriptor).number)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
   def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = SmapProto.javaDescriptor.getMessageTypes.get(0)
   def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = SmapProto.scalaDescriptor.messages(0)
-  def messageCompanionForFieldNumber(__number: Int): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
+  def messageCompanionForFieldNumber(__number: Int): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = {
+    var __out: _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = null
+    (__number: @_root_.scala.unchecked) match {
+      case 1 => __out = org.telecomsudparis.smap.Item
+    }
+    __out
+  }
   lazy val nestedMessagesCompanions: Seq[_root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
-  def enumCompanionForFieldNumber(__fieldNumber: Int): _root_.com.trueaccord.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
+  def enumCompanionForFieldNumber(__fieldNumber: Int): _root_.com.trueaccord.scalapb.GeneratedEnumCompanion[_] = {
+    (__fieldNumber: @_root_.scala.unchecked) match {
+      case 6 => org.telecomsudparis.smap.MapCommand.OperationType
+    }
+  }
   lazy val defaultInstance = org.telecomsudparis.smap.MapCommand(
   )
   sealed trait OperationType extends _root_.com.trueaccord.scalapb.GeneratedEnum {
@@ -259,15 +289,18 @@ object MapCommand extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.t
     def toJavaValue(pbScalaSource: OperationType): pb.Smap.MapCommand.OperationType = pb.Smap.MapCommand.OperationType.forNumber(pbScalaSource.value)
   }
   implicit class MapCommandLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, org.telecomsudparis.smap.MapCommand]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, org.telecomsudparis.smap.MapCommand](_l) {
-    def uuid: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.uuid)((c_, f_) => c_.copy(uuid = f_))
-    def key: _root_.com.trueaccord.lenses.Lens[UpperPB, _root_.com.google.protobuf.ByteString] = field(_.key)((c_, f_) => c_.copy(key = f_))
-    def data: _root_.com.trueaccord.lenses.Lens[UpperPB, _root_.com.google.protobuf.ByteString] = field(_.data)((c_, f_) => c_.copy(data = f_))
-    def pure: _root_.com.trueaccord.lenses.Lens[UpperPB, Boolean] = field(_.pure)((c_, f_) => c_.copy(pure = f_))
-    def sender: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.sender)((c_, f_) => c_.copy(sender = f_))
+    def item: _root_.com.trueaccord.lenses.Lens[UpperPB, org.telecomsudparis.smap.Item] = field(_.getItem)((c_, f_) => c_.copy(item = Some(f_)))
+    def optionalItem: _root_.com.trueaccord.lenses.Lens[UpperPB, scala.Option[org.telecomsudparis.smap.Item]] = field(_.item)((c_, f_) => c_.copy(item = f_))
+    def startKey: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.startKey)((c_, f_) => c_.copy(startKey = f_))
+    def recordcount: _root_.com.trueaccord.lenses.Lens[UpperPB, Int] = field(_.recordcount)((c_, f_) => c_.copy(recordcount = f_))
+    def callerId: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.callerId)((c_, f_) => c_.copy(callerId = f_))
+    def operationUuid: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.operationUuid)((c_, f_) => c_.copy(operationUuid = f_))
+    def operationType: _root_.com.trueaccord.lenses.Lens[UpperPB, org.telecomsudparis.smap.MapCommand.OperationType] = field(_.operationType)((c_, f_) => c_.copy(operationType = f_))
   }
-  final val UUID_FIELD_NUMBER = 1
-  final val KEY_FIELD_NUMBER = 2
-  final val DATA_FIELD_NUMBER = 3
-  final val PURE_FIELD_NUMBER = 4
-  final val SENDER_FIELD_NUMBER = 5
+  final val ITEM_FIELD_NUMBER = 1
+  final val STARTKEY_FIELD_NUMBER = 2
+  final val RECORDCOUNT_FIELD_NUMBER = 3
+  final val CALLERID_FIELD_NUMBER = 4
+  final val OPERATIONUUID_FIELD_NUMBER = 5
+  final val OPERATIONTYPE_FIELD_NUMBER = 6
 }

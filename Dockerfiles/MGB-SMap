@@ -10,7 +10,8 @@ ADD target/$JAR $NAME/
 
 WORKDIR $NAME
 
-CMD java -jar $JAR host=${HOST} \
+CMD java -jar $JAR zhost=${ZHOST} \
+                   zport=${ZPORT} \
                    port=${PORT} \
-                   clients=${CLIENTS} \
-                   zk=${ZK}
+                   lread=${LREAD} \
+                   verbose=${VERBOSE}

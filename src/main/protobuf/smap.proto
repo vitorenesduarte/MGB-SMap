@@ -10,11 +10,11 @@ option (scalapb.options) = {
 package pb;
 
 message MapCommand {
-    string uuid = 1;
-    bytes key = 2;
-    bytes data = 3;
-    bool pure = 4;
-    string sender = 5;
+    Item item = 1;
+    string startKey = 2;
+    int32 recordcount = 3;
+    string callerId = 4;
+    string operationUuid = 5;
     enum OperationType {
         INSERT = 0;
         GET = 1;
@@ -22,12 +22,27 @@ message MapCommand {
         DELETE = 3;
         SCAN = 4;
     }
+    OperationType operationType = 6;
+}
+
+message Field {
+    string key = 1;
+    string data = 2;
+}
+
+message Item {
+    string key = 1;
+    repeated Field fields = 2;
 }
 
 message Result {
-    bool data = 1;
+    repeated Field resultingPairs = 1;
+}
+
+message ResultsCollection {
+    repeated Result results = 1;
 }
 
 service smap {
-    rpc ExecuteCmd(MapCommand) returns (Result) {}
+    rpc ExecuteCmd(MapCommand) returns (ResultsCollection) {}
 }

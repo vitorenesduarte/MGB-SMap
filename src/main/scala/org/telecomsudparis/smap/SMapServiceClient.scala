@@ -26,10 +26,9 @@ class SMapServiceClient (host: String, port: Int){
   import io.grpc.StatusRuntimeException
 
   /**
-    * Blocking unary call.  Calls processCmd and prints the response.
+    * Blocking unary call.  Calls executeCmd and returns the response.
     */
-  def sendCmd(): Unit = {
-    val request = MapCommand()
+  def sendCmd(request: MapCommand): Unit = {
     try {
       val result = blockingStub.executeCmd(request)
     } catch {
@@ -44,11 +43,13 @@ object SMapServiceClient extends App {
 
   //TODO: Get parameters from properties
   val client = new SMapServiceClient("localhost", 8980)
+  /*
   var stop = false
 
-    try {
+  try {
     while (!stop) {
       client.sendCmd()
     }
   } finally client.shutdown()
+  */
 }

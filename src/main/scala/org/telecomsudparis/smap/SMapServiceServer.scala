@@ -1,7 +1,7 @@
 package org.telecomsudparis.smap
 
 import java.util.logging.Logger
-
+import scala.util.Properties
 import io.grpc.{Server, ServerBuilder}
 
 class SMapServiceServer(server: Server) {
@@ -33,12 +33,26 @@ class SMapServiceServer(server: Server) {
 
 object SMapServiceServer extends App {
   //TODO: get server parameters from properties
+
+  //Zookeeper host & port
+  val zhost: String = System.getProperties.getProperty("zhost")
+  val zport: String = System.getProperties.getProperty("zport")
+  val javaClientConfig = Array("-zk=" + zhost + ":" + zport)
+
+  val localReads: Boolean = System.getProperties.getProperty("lread").toBoolean
+  val verbose: Boolean = System.getProperties.getProperty("verbose").toBoolean
+
+  var serviceServer = new SMapServer(localReads, verbose, javaClientConfig)
+  var serviceClient = new SMapClient(true, serviceServer)
+
+  serviceServer.serverInit()
+
   val server = new SMapServiceServer(
     ServerBuilder
       .forPort(8980)
       .addService(
         smapGrpc.bindService(
-          new SMapService[String](Array("")),
+          new SMapService(serviceServer, serviceClient),
           scala.concurrent.ExecutionContext.global
         )
       )

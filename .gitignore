@@ -1,5 +1,7 @@
 .*.swp
 .idea/
-target/
+*.class
+target/streams/
+target/classes/
 project/project/
 project/target/

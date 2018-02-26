@@ -1,18 +1,11 @@
 package org.telecomsudparis.smap
 
-import org.imdea.vcd.pb.Proto._
 import com.google.protobuf.{ByteString => ProtobufByteString}
-
-import scala.collection.mutable
 import scala.concurrent._
 import scala.concurrent.duration._
 
 //producer
-class SMapClient[B](var verbose: Boolean, mapServer: SMapServer[B]) {
-  //FIXME: This is horrible
-  type pResults = Promise[resultsType]
-  type resultsType = Either[Option[B], java.util.Collection[B]]
-
+class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
   var clientId: String = SMapClient.uuid()
   var threadName: String = SMapClient.uuid()
   var pendings = scala.collection.mutable.ListBuffer.empty[String]
@@ -21,6 +14,27 @@ class SMapClient[B](var verbose: Boolean, mapServer: SMapServer[B]) {
     println(s"Client Id: $clientId")
     println(s"Thread Name: $threadName")
   }
+
+  def sendCommand(operation: MapCommand): ResultsCollection = {
+    val msgMGB = SMapClient.generateMsg(operation)
+    val opUuid = OperationUniqueId(operation.operationUuid)
+
+    val pro = PromiseResults(Promise[ResultsCollection]())
+    val fut = pro.pResult.future
+
+    mapServer.promiseMap += (opUuid -> pro)
+
+    if(!mapServer.localReads) {
+      mapServer.queue.put(msgMGB)
+    } else {
+      mapServer.localReadsQueue.put(operation)
+    }
+
+    val response = Await.result(fut, Duration.Inf)
+    mapServer.promiseMap -= opUuid
+    response
+  }
+
 
   /*
   def sendPut(key: String, data: B): resultsType = {
@@ -40,8 +54,7 @@ class SMapClient[B](var verbose: Boolean, mapServer: SMapServer[B]) {
   }
   */
 
-  //TODO: Collapse the next functions into a generic one
-
+  /*
   def sendInsert(key: String, data: B): resultsType = {
     // waitLastCall()
     //val sayMyName = Thread.currentThread().getName()
@@ -176,10 +189,13 @@ class SMapClient[B](var verbose: Boolean, mapServer: SMapServer[B]) {
       pendings.clear()
     }
   }
+  */
 
 }
 
+import org.imdea.vcd.pb.Proto._
 object SMapClient {
+  /*
   def generateMsgSet[B](h: String, d: B): MessageSet = synchronized {
     val hash1 =
       if(!d.isInstanceOf[ReadOp]) {
@@ -200,20 +216,20 @@ object SMapClient {
 
     builder.build()
   }
+  */
 
-  def generateMsg[B](h: String, d: B): Message = synchronized {
-    val hash1 =
-      if(!d.isInstanceOf[ReadOp]) {
-        //hash == key parameter in pure write operations
-        ProtobufByteString.copyFrom(Serialization.serialise(h))
-      } else {
+  def generateMsg[B](toMGB: MapCommand): Message = synchronized {
+    val mgbHash =
+      if(toMGB.operationType.isScan || toMGB.operationType.isGet) {
         //hash == new byte[]{0} in case of read ops
         //NOTE: "And we only send collects of white color messages to a majority"
         ProtobufByteString.copyFrom(Array[Byte](0))
+      } else {
+        //hash == key parameter in pure write operations
+        ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
       }
-
-    val data1 = ProtobufByteString.copyFrom(Serialization.serialise(d))
-    val msg: Message = Message.newBuilder().setHash(hash1).setData(data1).build()
+    val mgbData = toMGB.toByteString
+    val msg: Message = Message.newBuilder().setHash(mgbHash).setData(mgbData).build()
     msg
   }
 

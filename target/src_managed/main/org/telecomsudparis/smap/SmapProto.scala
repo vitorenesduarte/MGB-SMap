@@ -13,15 +13,23 @@ object SmapProto extends _root_.com.trueaccord.scalapb.GeneratedFileObject {
   )
   lazy val messagesCompanions: Seq[_root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_]] = Seq(
     org.telecomsudparis.smap.MapCommand,
-    org.telecomsudparis.smap.Result
+    org.telecomsudparis.smap.Field,
+    org.telecomsudparis.smap.Item,
+    org.telecomsudparis.smap.Result,
+    org.telecomsudparis.smap.ResultsCollection
   )
   private lazy val ProtoBytes: Array[Byte] =
       com.trueaccord.scalapb.Encoding.fromBase64(scala.collection.Seq(
-  """CgpzbWFwLnByb3RvEgJwYhoVc2NhbGFwYi9zY2FsYXBiLnByb3RvIroBCgpNYXBDb21tYW5kEhIKBHV1aWQYASABKAlSBHV1a
-  WQSEAoDa2V5GAIgASgMUgNrZXkSEgoEZGF0YRgDIAEoDFIEZGF0YRISCgRwdXJlGAQgASgIUgRwdXJlEhYKBnNlbmRlchgFIAEoC
-  VIGc2VuZGVyIkYKDU9wZXJhdGlvblR5cGUSCgoGSU5TRVJUEAASBwoDR0VUEAESCgoGVVBEQVRFEAISCgoGREVMRVRFEAMSCAoEU
-  0NBThAEIhwKBlJlc3VsdBISCgRkYXRhGAEgASgIUgRkYXRhMjIKBHNtYXASKgoKRXhlY3V0ZUNtZBIOLnBiLk1hcENvbW1hbmQaC
-  i5wYi5SZXN1bHQiAEIf4j8cChhvcmcudGVsZWNvbXN1ZHBhcmlzLnNtYXAQAWIGcHJvdG8z"""
+  """CgpzbWFwLnByb3RvEgJwYhoVc2NhbGFwYi9zY2FsYXBiLnByb3RvIrYCCgpNYXBDb21tYW5kEhwKBGl0ZW0YASABKAsyCC5wY
+  i5JdGVtUgRpdGVtEhoKCHN0YXJ0S2V5GAIgASgJUghzdGFydEtleRIgCgtyZWNvcmRjb3VudBgDIAEoBVILcmVjb3JkY291bnQSG
+  goIY2FsbGVySWQYBCABKAlSCGNhbGxlcklkEiQKDW9wZXJhdGlvblV1aWQYBSABKAlSDW9wZXJhdGlvblV1aWQSQgoNb3BlcmF0a
+  W9uVHlwZRgGIAEoDjIcLnBiLk1hcENvbW1hbmQuT3BlcmF0aW9uVHlwZVINb3BlcmF0aW9uVHlwZSJGCg1PcGVyYXRpb25UeXBlE
+  goKBklOU0VSVBAAEgcKA0dFVBABEgoKBlVQREFURRACEgoKBkRFTEVURRADEggKBFNDQU4QBCItCgVGaWVsZBIQCgNrZXkYASABK
+  AlSA2tleRISCgRkYXRhGAIgASgJUgRkYXRhIjsKBEl0ZW0SEAoDa2V5GAEgASgJUgNrZXkSIQoGZmllbGRzGAIgAygLMgkucGIuR
+  mllbGRSBmZpZWxkcyI7CgZSZXN1bHQSMQoOcmVzdWx0aW5nUGFpcnMYASADKAsyCS5wYi5GaWVsZFIOcmVzdWx0aW5nUGFpcnMiO
+  QoRUmVzdWx0c0NvbGxlY3Rpb24SJAoHcmVzdWx0cxgBIAMoCzIKLnBiLlJlc3VsdFIHcmVzdWx0czI9CgRzbWFwEjUKCkV4ZWN1d
+  GVDbWQSDi5wYi5NYXBDb21tYW5kGhUucGIuUmVzdWx0c0NvbGxlY3Rpb24iAEIf4j8cChhvcmcudGVsZWNvbXN1ZHBhcmlzLnNtY
+  XAQAWIGcHJvdG8z"""
       ).mkString)
   lazy val scalaDescriptor: _root_.scalapb.descriptors.FileDescriptor = {
     val scalaProto = com.google.protobuf.descriptor.FileDescriptorProto.parseFrom(ProtoBytes)

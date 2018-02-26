@@ -8,64 +8,56 @@ import ExecutionContext.Implicits.global
 import concurrent.ExecutionContext.Implicits.global._
 import java.util.concurrent.{ExecutorService, Executors}
 
-import scala.collection.concurrent.{TrieMap => ConcurrentTrieMap}
+import scala.collection.concurrent.{TrieMap => CTrieMap}
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.collection.mutable.{TreeMap => MTreeMap}
+import scala.collection.mutable.{Map => MMap}
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 import java.util.concurrent.LinkedBlockingQueue
 import java.io.IOException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
-//consumer
-class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Boolean, var config: Array[String]) {
-  //FIXME: This is horrible, should properly type stuff
-  type pResults = Promise[resultsType]
-  type resultsType = Either[Option[B], java.util.Collection[B]]
-
+/**
+  * Consumer Class
+  */
+class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String]) {
+  var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
   var javaSocket = Socket.create(javaClientConfig)
   //val dummySocket = DummySocket.create(javaClientConfig)
 
-  //var mapCopy = MHashMap[String, B]()
-  //FIXME: Should rollback to [A,B], only using string because of YCSB.
-  var mapCopy = MTreeMap[String, B]()
-  //var mapCopy = MTreeMap[A, B]()
-
-  //We want to be sequentially consistent
-  //Object.uuid -> Promise
-  //FIXME: Better typing
-  var pendingMap = ConcurrentTrieMap[String, Promise[Boolean]]()
-
-  //ThreadName -> Object.uuid
-  // var lastCall = ConcurrentTrieMap[String, String]()
-
-  //FIXME: First map parameter (A) should be of type OperationUniqueId and NOT raw String
-  var promiseMap = ConcurrentTrieMap[String, pResults]()
-
+  var mapCopy = MTreeMap[String, MMap[String, String]]()
+  var pendingMap = CTrieMap[OperationUniqueId, Promise[Boolean]]()
+  var promiseMap = CTrieMap[OperationUniqueId, PromiseResults]()
   var queue = new LinkedBlockingQueue[Message]()
-
-  //val localReadsQueue = new LinkedBlockingQueue[Get[A,String]]()
-  var localReadsQueue = new LinkedBlockingQueue[ReadOp]()
+  var localReadsQueue = new LinkedBlockingQueue[MapCommand]()
 
   @volatile var stop = false
-  //uses implicit conversions
+
+  /**
+  * Using implicit conversions, definition at package.scala.
+  */
+
   var receiveMessages: Thread = new Thread(() => receiveLoop)
   var consume: Thread = new Thread(()=> consumeLocally)
   var localReading: Thread = new Thread(()=> doLocalReading)
   var pool: ExecutorService = Executors.newFixedThreadPool(3)
+
+  /**
+  * Lock definition to properly access mapCopy when doing local reads.
+  */
   var lock = new ReentrantReadWriteLock()
 
   if(verbose) {
-    println("SMapServer Id: " + this.serverId)
-    println("Local Reads: " + this.localReads.toString)
+    println("SMapServer Id: " + serverId)
+    println("Local Reads: " + localReads)
   }
 
-  //override lazy val logger = Logger[VCDMapServer[B]]
-
-  implicit def funcToRunnable( func : () => Unit ) = new Runnable(){ def run() = func()}
-
+  /**
+    * Thread handling MessageSets received from MGB.
+    */
   def receiveLoop(): Unit = {
     try {
       while (!stop) {
@@ -74,11 +66,13 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
       }
     } catch {
       case ex: IOException =>
-        println("Receive Loop Interrupted at Server " ++ serverId)
+        println("Receive Loop Interrupted at SMapServer: " ++ serverId)
     }
   }
 
-  //WRITER THREAD
+  /**
+    *  The thread builds a MGB MessageSet and sends it through javaClient Socket
+    */
   def consumeLocally(): Unit = {
     try {
       var msgList = ListBuffer[Message]().asJava
@@ -101,19 +95,18 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
       }
     } catch {
       case ex: InterruptedException =>
-        println("Consume Loop Interrupted at Server " ++ serverId)
+        println("Consume Loop Interrupted at SMapServer: " ++ serverId)
     }
   }
 
   def doLocalReading(): Unit = {
     try {
-      var readList = ListBuffer[ReadOp]().asJava
+      var readList = ListBuffer[MapCommand]().asJava
       while (!stop) {
         val readOperation = localReadsQueue.take()
         readList.add(readOperation)
         localReadsQueue.drainTo(readList)
 
-        //val readOpElem = localReadsQueue.take()
         try {
           lock.readLock().lock()
           //Since we're doing local reads I assume DELIVERED msgStatus
@@ -125,7 +118,7 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
       }
     } catch {
       case ex: InterruptedException =>
-        println("LocalRead Consume Loop Interrupted at Server " ++ serverId)
+        println("LocalRead Consume Loop Interrupted at SMapServer: " ++ serverId)
     }
   }
 
@@ -143,9 +136,12 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
     //dummySocket.closeRw()
   }
 
+  /**
+    *  Calls applyOperation for each MapCommand obtained through the MGB MessageSet
+    */
   def serverExecuteCmd(mset: MessageSet): Unit = {
     val msgSetAsList = mset.getMessagesList.asScala
-    val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMsg(msg))
+    val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
 
     try {
       lock.writeLock().lock()
@@ -156,17 +152,21 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
 
   }
 
-  def ringBell(uid: String, pMap: ConcurrentTrieMap[String, pResults], pr: resultsType): Unit = {
+  /*
+  def ringBell(uid: OperationUniqueId, pMap: CTrieMap[OperationUniqueId, PromiseResults], pr: Results): Unit = {
     if(pMap isDefinedAt uid) {
         pMap(uid) success pr
     }
   }
+  */
 
+  /*
   def ringBellPending(uid: String, pendingM: ConcurrentTrieMap[String, Promise[Boolean]]): Unit = {
     if(pendingM isDefinedAt uid) {
       pendingM(uid) success true
     }
   }
+  */
 
   /*
   def slicedToArray[B](sliced: MTreeMap[A,B])(implicit tag:ClassTag[B]): Array[B] = {
@@ -175,12 +175,14 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
   }
   */
 
-  def applyOperation(deliveredOperation: Any)(msgSetStatus: MessageSet.Status): Unit = {
-    val msgStatusNumber = msgSetStatus.getNumber
+  def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
+    //val msgStatusNumber = msgSetStatus.getNumber
 
-    //   println(queue.size+" "+pendingMap.size+" "+promiseMap.size+" "+localReadsQueue.size)
+    //println(queue.size+" "+pendingMap.size+" "+promiseMap.size+" "+localReadsQueue.size)
+    val uuid = OperationUniqueId(deliveredOperation.operationUuid)
+    val opItem = deliveredOperation.getItem
 
-    deliveredOperation match {
+    deliveredOperation.operationType match {
       /*
       case Put(_,_,_,_) =>
         val p = deliveredOperation.asInstanceOf[Put[String, B, String]]
@@ -192,7 +194,25 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
 
         }
        */
+      //Insert a new record
+      case MapCommand.OperationType.INSERT =>
+        if(msgSetStatus == MessageSet.Status.COMMITTED){
+          //ringBell(uuid, promiseMap, Results())
+        } else {
+          if(msgSetStatus == MessageSet.Status.DELIVERED){
 
+            //mapCopy += (opItem.key ->)
+          }
+        }
+        /*
+      case MapCommand.OperationType.UPDATE =>
+      case MapCommand.OperationType.DELETE =>
+      case MapCommand.OperationType.GET =>
+      case MapCommand.OperationType.SCAN =>
+      */
+
+
+      /*
       case Insert(_,_,_,_) =>
         val i = deliveredOperation.asInstanceOf[Insert[String, B, String]]
         //Pure Write, can respond to the client as soon as I receive COMMITTED status
@@ -266,27 +286,29 @@ class SMapServer[B](serverId: String, var localReads: Boolean, var verbose: Bool
           }
           */
         }
-
+      */
       case _ => println("Unknown Operation")
     }
 
   }
 
+  /*
   def saveMap = Serialization.writeObjectToFile(this.mapCopy, "/tmp/map.ser")
 
   def readMap = Serialization.readObjectFromFile("/tmp/map.ser")
 
   def setMapFromFile() = { this.mapCopy = readMap.asInstanceOf[MTreeMap[String,B]] }
+  */
 
 }
 
 object SMapServer {
   //WARNING: Returning only the data field.
-  def unmarshallMsg(m: Message): Any = {
-    val h = m.getHash
-    val d = m.getData
+  def unmarshallMGBMsg(m: Message): MapCommand = {
+    val hashMGB = m.getHash
+    val dataMGB = m.getData
 
-    Serialization.deserialise(m.getData.toByteArray)
+    MapCommand.parseFrom(dataMGB.toByteArray)
   }
 
   //If I define the ordering[A] here,

@@ -5,17 +5,17 @@
 
 package org.telecomsudparis.smap
 
-
+import scala.collection.JavaConverters._
 
 @SerialVersionUID(0L)
 final case class Result(
-    data: Boolean = false
+    resultingPairs: _root_.scala.collection.Seq[org.telecomsudparis.smap.Field] = _root_.scala.collection.Seq.empty
     ) extends com.trueaccord.scalapb.GeneratedMessage with com.trueaccord.scalapb.Message[Result] with com.trueaccord.lenses.Updatable[Result] {
     @transient
     private[this] var __serializedSizeCachedValue: Int = 0
     private[this] def __computeSerializedValue(): Int = {
       var __size = 0
-      if (data != false) { __size += _root_.com.google.protobuf.CodedOutputStream.computeBoolSize(1, data) }
+      resultingPairs.foreach(resultingPairs => __size += 1 + _root_.com.google.protobuf.CodedOutputStream.computeUInt32SizeNoTag(resultingPairs.serializedSize) + resultingPairs.serializedSize)
       __size
     }
     final override def serializedSize: Int = {
@@ -27,42 +27,41 @@ final case class Result(
       read
     }
     def writeTo(`_output__`: _root_.com.google.protobuf.CodedOutputStream): Unit = {
-      {
-        val __v = data
-        if (__v != false) {
-          _output__.writeBool(1, __v)
-        }
+      resultingPairs.foreach { __v =>
+        _output__.writeTag(1, 2)
+        _output__.writeUInt32NoTag(__v.serializedSize)
+        __v.writeTo(_output__)
       };
     }
     def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): org.telecomsudparis.smap.Result = {
-      var __data = this.data
+      val __resultingPairs = (_root_.scala.collection.immutable.Vector.newBuilder[org.telecomsudparis.smap.Field] ++= this.resultingPairs)
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
         _tag__ match {
           case 0 => _done__ = true
-          case 8 =>
-            __data = _input__.readBool()
+          case 10 =>
+            __resultingPairs += _root_.com.trueaccord.scalapb.LiteParser.readMessage(_input__, org.telecomsudparis.smap.Field.defaultInstance)
           case tag => _input__.skipField(tag)
         }
       }
       org.telecomsudparis.smap.Result(
-          data = __data
+          resultingPairs = __resultingPairs.result()
       )
     }
-    def withData(__v: Boolean): Result = copy(data = __v)
+    def clearResultingPairs = copy(resultingPairs = _root_.scala.collection.Seq.empty)
+    def addResultingPairs(__vs: org.telecomsudparis.smap.Field*): Result = addAllResultingPairs(__vs)
+    def addAllResultingPairs(__vs: TraversableOnce[org.telecomsudparis.smap.Field]): Result = copy(resultingPairs = resultingPairs ++ __vs)
+    def withResultingPairs(__v: _root_.scala.collection.Seq[org.telecomsudparis.smap.Field]): Result = copy(resultingPairs = __v)
     def getFieldByNumber(__fieldNumber: Int): scala.Any = {
       (__fieldNumber: @_root_.scala.unchecked) match {
-        case 1 => {
-          val __t = data
-          if (__t != false) __t else null
-        }
+        case 1 => resultingPairs
       }
     }
     def getField(__field: _root_.scalapb.descriptors.FieldDescriptor): _root_.scalapb.descriptors.PValue = {
       require(__field.containingMessage eq companion.scalaDescriptor)
       (__field.number: @_root_.scala.unchecked) match {
-        case 1 => _root_.scalapb.descriptors.PBoolean(data)
+        case 1 => _root_.scalapb.descriptors.PRepeated(resultingPairs.map(_.toPMessage)(_root_.scala.collection.breakOut))
       }
     }
     override def toString: String = _root_.com.trueaccord.scalapb.TextFormat.printToUnicodeString(this)
@@ -73,36 +72,42 @@ object Result extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.telec
   implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.Result] with com.trueaccord.scalapb.JavaProtoSupport[org.telecomsudparis.smap.Result, pb.Smap.Result] = this
   def toJavaProto(scalaPbSource: org.telecomsudparis.smap.Result): pb.Smap.Result = {
     val javaPbOut = pb.Smap.Result.newBuilder
-    javaPbOut.setData(scalaPbSource.data)
+    javaPbOut.addAllResultingPairs(scalaPbSource.resultingPairs.map(org.telecomsudparis.smap.Field.toJavaProto)(_root_.scala.collection.breakOut).asJava)
     javaPbOut.build
   }
   def fromJavaProto(javaPbSource: pb.Smap.Result): org.telecomsudparis.smap.Result = org.telecomsudparis.smap.Result(
-    data = javaPbSource.getData.booleanValue
+    resultingPairs = javaPbSource.getResultingPairsList.asScala.map(org.telecomsudparis.smap.Field.fromJavaProto)(_root_.scala.collection.breakOut)
   )
   def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): org.telecomsudparis.smap.Result = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
     org.telecomsudparis.smap.Result(
-      __fieldsMap.getOrElse(__fields.get(0), false).asInstanceOf[Boolean]
+      __fieldsMap.getOrElse(__fields.get(0), Nil).asInstanceOf[_root_.scala.collection.Seq[org.telecomsudparis.smap.Field]]
     )
   }
   implicit def messageReads: _root_.scalapb.descriptors.Reads[org.telecomsudparis.smap.Result] = _root_.scalapb.descriptors.Reads{
     case _root_.scalapb.descriptors.PMessage(__fieldsMap) =>
       require(__fieldsMap.keys.forall(_.containingMessage == scalaDescriptor), "FieldDescriptor does not match message type.")
       org.telecomsudparis.smap.Result(
-        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[Boolean]).getOrElse(false)
+        __fieldsMap.get(scalaDescriptor.findFieldByNumber(1).get).map(_.as[_root_.scala.collection.Seq[org.telecomsudparis.smap.Field]]).getOrElse(_root_.scala.collection.Seq.empty)
       )
     case _ => throw new RuntimeException("Expected PMessage")
   }
-  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = SmapProto.javaDescriptor.getMessageTypes.get(1)
-  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = SmapProto.scalaDescriptor.messages(1)
-  def messageCompanionForFieldNumber(__number: Int): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__number)
+  def javaDescriptor: _root_.com.google.protobuf.Descriptors.Descriptor = SmapProto.javaDescriptor.getMessageTypes.get(3)
+  def scalaDescriptor: _root_.scalapb.descriptors.Descriptor = SmapProto.scalaDescriptor.messages(3)
+  def messageCompanionForFieldNumber(__number: Int): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = {
+    var __out: _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = null
+    (__number: @_root_.scala.unchecked) match {
+      case 1 => __out = org.telecomsudparis.smap.Field
+    }
+    __out
+  }
   lazy val nestedMessagesCompanions: Seq[_root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_]] = Seq.empty
   def enumCompanionForFieldNumber(__fieldNumber: Int): _root_.com.trueaccord.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__fieldNumber)
   lazy val defaultInstance = org.telecomsudparis.smap.Result(
   )
   implicit class ResultLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, org.telecomsudparis.smap.Result]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, org.telecomsudparis.smap.Result](_l) {
-    def data: _root_.com.trueaccord.lenses.Lens[UpperPB, Boolean] = field(_.data)((c_, f_) => c_.copy(data = f_))
+    def resultingPairs: _root_.com.trueaccord.lenses.Lens[UpperPB, _root_.scala.collection.Seq[org.telecomsudparis.smap.Field]] = field(_.resultingPairs)((c_, f_) => c_.copy(resultingPairs = f_))
   }
-  final val DATA_FIELD_NUMBER = 1
+  final val RESULTINGPAIRS_FIELD_NUMBER = 1
 }
