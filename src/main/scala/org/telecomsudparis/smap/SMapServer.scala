@@ -169,13 +169,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   }
   */
 
-  /*
-  def slicedToArray[B](sliced: MTreeMap[A,B])(implicit tag:ClassTag[B]): Array[B] = {
-    sliced.values.toArray
-    sliced.values.to
-  }
-  */
 
+  /**
+    *  For READS and SCANS only using first value of map Item.fields
+    */
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
     import org.telecomsudparis.smap.MapCommand.OperationType._
     import org.imdea.vcd.pb.Proto.MessageSet.Status
@@ -235,32 +232,23 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           ringBell(uuid, promiseMap, result)
         }
 
-      //FIXME
       case SCAN =>
         if(msgSetStatus == Status.DELIVERED){
-          //val partialResult = (mapCopy from deliveredOperation.startKey) slice(0, deliveredOperation.recordcount)
-          ringBell(uuid, promiseMap, ResultsCollection())
-        }
+          var seqResults: Seq[Item] = Seq()
+          val mapCopyScan = (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount)
 
-
-      /*
-      case Scan(_,_,_,_) =>
-        val s = deliveredOperation.asInstanceOf[Scan[String, Integer, String]]
-        //in case of (localReads == false) apply SCAN only to the caller
-        if(msgSetStatus.getNumber == 2) {
-          val partialResult = (mapCopy from s.startingKey) slice(0, s.recordCount)
-          val result = partialResult.values.toVector.asJavaCollection
-
-          //val result = List[B]().toVector.asJavaCollection
-          ringBell(s.uuid, promiseMap, Right(result))
-            /*
-          if(verbose) {
-            logger.debug(s"(ApplyOperation) Server: $serverId, " +
-              s"MessageSet Status: $msgStatusNumber, Scan Operation Result = $result, MapCopy=$mapCopy")
+          for (elem <- mapCopyScan.values) {
+            val tempResult: MMap[String, String] = MMap()
+            for (field <- opItem.fields.keys) {
+              tempResult += (field -> elem(field))
+            }
+            val tempItem = Item(fields = tempResult.toMap)
+            seqResults :+= tempItem
           }
-          */
+
+          ringBell(uuid, promiseMap, ResultsCollection(seqResults))
         }
-      */
+
       case _ => println("Unknown Operation")
     }
 
