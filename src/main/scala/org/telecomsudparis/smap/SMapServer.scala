@@ -99,6 +99,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     }
   }
 
+  /**
+    *  Thread for processing local read requests, calls applyOperation with hardcoded DELIVERED status
+    */
   def doLocalReading(): Unit = {
     try {
       var readList = ListBuffer[MapCommand]().asJava
@@ -152,13 +155,11 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
   }
 
-  /*
-  def ringBell(uid: OperationUniqueId, pMap: CTrieMap[OperationUniqueId, PromiseResults], pr: Results): Unit = {
-    if(pMap isDefinedAt uid) {
-        pMap(uid) success pr
+  def ringBell(uid: OperationUniqueId, pm: CTrieMap[OperationUniqueId, PromiseResults], pr: ResultsCollection): Unit = {
+    if(pm isDefinedAt uid) {
+        pm(uid).pResult success pr
     }
   }
-  */
 
   /*
   def ringBellPending(uid: String, pendingM: ConcurrentTrieMap[String, Promise[Boolean]]): Unit = {
@@ -176,100 +177,73 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   */
 
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
-    //val msgStatusNumber = msgSetStatus.getNumber
+    import org.telecomsudparis.smap.MapCommand.OperationType._
+    import org.imdea.vcd.pb.Proto.MessageSet.Status
 
-    //println(queue.size+" "+pendingMap.size+" "+promiseMap.size+" "+localReadsQueue.size)
     val uuid = OperationUniqueId(deliveredOperation.operationUuid)
     val opItem = deliveredOperation.getItem
+    val opItemKey = opItem.key
+    //opItem is immutable.Map, doing a conversion.
+    val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
 
     deliveredOperation.operationType match {
-      /*
-      case Put(_,_,_,_) =>
-        val p = deliveredOperation.asInstanceOf[Put[String, B, String]]
-        //Not pure write, should wait until DELIVERED status
-        if(msgStatusNumber == 2) {
-          val result = mapCopy put(p.key, p.data)
-          ringBell(p.uuid, promiseMap, Left(result))
-          ringBellPending(p.uuid, pendingMap)
-
-        }
-       */
-      //Insert a new record
-      case MapCommand.OperationType.INSERT =>
-        if(msgSetStatus == MessageSet.Status.COMMITTED){
-          //ringBell(uuid, promiseMap, Results())
+      case INSERT =>
+        if(msgSetStatus == Status.COMMITTED){
+          ringBell(uuid, promiseMap, ResultsCollection())
         } else {
-          if(msgSetStatus == MessageSet.Status.DELIVERED){
-
-            //mapCopy += (opItem.key ->)
+          if(msgSetStatus == Status.DELIVERED){
+            mapCopy += (opItemKey -> mutableFieldsMap)
           }
         }
-        /*
-      case MapCommand.OperationType.UPDATE =>
-      case MapCommand.OperationType.DELETE =>
-      case MapCommand.OperationType.GET =>
-      case MapCommand.OperationType.SCAN =>
-      */
+
+      case UPDATE =>
+        if(msgSetStatus == Status.COMMITTED){
+          ringBell(uuid, promiseMap, ResultsCollection())
+        } else {
+          if(msgSetStatus == Status.DELIVERED){
+            if(mapCopy isDefinedAt opItemKey){
+              mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
+            } else {
+              mapCopy += (opItemKey -> mutableFieldsMap)
+            }
+          }
+        }
+
+      case DELETE =>
+        if(msgSetStatus == Status.COMMITTED){
+          ringBell(uuid, promiseMap, ResultsCollection())
+        } else {
+          if(msgSetStatus == Status.DELIVERED){
+            mapCopy -= opItemKey
+          }
+        }
+
+      case GET =>
+        //in case of (localReads == false) apply GET only to the caller
+        if(msgSetStatus == Status.DELIVERED){
+          val result: ResultsCollection = {
+            if(mapCopy isDefinedAt opItemKey) {
+              val tempResult: MMap[String, String] = MMap()
+              opItem.fields.foreach(record => tempResult += (record._1 -> mapCopy(opItemKey)(record._1)))
+              val mapResult = tempResult.toMap
+              val getItem = Item(key = opItemKey, fields = mapResult)
+              ResultsCollection(Seq(getItem))
+            } else {
+              ResultsCollection()
+            }
+          }
+          ringBell(uuid, promiseMap, result)
+        }
+
+      //FIXME
+      case SCAN =>
+        if(msgSetStatus == Status.DELIVERED){
+          //val partialResult = (mapCopy from deliveredOperation.startKey) slice(0, deliveredOperation.recordcount)
+          ringBell(uuid, promiseMap, ResultsCollection())
+        }
 
 
       /*
-      case Insert(_,_,_,_) =>
-        val i = deliveredOperation.asInstanceOf[Insert[String, B, String]]
-        //Pure Write, can respond to the client as soon as I receive COMMITTED status
-        if(msgStatusNumber == 1) {
-          ringBell(i.uuid, promiseMap, Left(None))
-        } else { // DELIVERED
-          mapCopy += (i.key -> i.data)
-          ringBellPending(i.uuid, pendingMap)
-          /*
-          if(verbose) {
-            logger.debug(s"(ApplyOperation) Server: $serverId, " +
-              s"MessageSet Status: $msgStatusNumber, Insert Operation, MapCopy=$mapCopy")
-          }
-          */
-        }
-
-      case Update(_,_,_,_) =>
-        val u = deliveredOperation.asInstanceOf[Update[String, B, String]]
-        //Pure Write, can respond to the client as soon as I receive COMMITTED status
-        if(msgStatusNumber == 1) {
-          ringBell(u.uuid, promiseMap, Left(None))
-        } else { //DELIVERED
-          mapCopy update (u.key, u.data)
-          ringBellPending(u.uuid, pendingMap)
-
-          /*
-          if(verbose) {
-            logger.debug(s"(ApplyOperation) Server: $serverId, " +
-              s"MessageSet Status: $msgStatusNumber, Update Operation, MapCopy=$mapCopy")
-          }
-          */
-        }
-
-      case Delete(_,_,_) =>
-        val d = deliveredOperation.asInstanceOf[Delete[String, String]]
-        //Pure Write, can respond to the client as soon as I receive COMMITTED status
-        if(msgStatusNumber == 1) {
-          ringBell(d.uuid, promiseMap, Left(None))
-        } else { //DELIVERED
-          mapCopy -= d.key
-          ringBellPending(d.uuid, pendingMap)
-          /*
-          if(verbose) {
-            logger.debug(s"(ApplyOperation) Server: $serverId, " +
-              s"MessageSet Status: $msgStatusNumber, Delete Operation, MapCopy=$mapCopy")
-          }
-          */
-        }
-
-      case Get(_,_,_) =>
-        val g = deliveredOperation.asInstanceOf[Get[String, String]]
-        //in case of (localReads == false) apply GET only to the caller
-        if(msgSetStatus.getNumber == 2) {
-          val result = mapCopy get g.key
-          ringBell(g.uuid, promiseMap, Left(result))
-        }
-
       case Scan(_,_,_,_) =>
         val s = deliveredOperation.asInstanceOf[Scan[String, Integer, String]]
         //in case of (localReads == false) apply SCAN only to the caller

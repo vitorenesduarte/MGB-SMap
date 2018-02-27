@@ -25,22 +25,13 @@ message MapCommand {
     OperationType operationType = 6;
 }
 
-message Field {
-    string key = 1;
-    string data = 2;
-}
-
 message Item {
     string key = 1;
-    repeated Field fields = 2;
-}
-
-message Result {
-    repeated Field resultingPairs = 1;
+    map<string, string> fields = 2;
 }
 
 message ResultsCollection {
-    repeated Result results = 1;
+    repeated Item results = 1;
 }
 
 service smap {

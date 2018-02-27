@@ -1,3 +1,15 @@
 [0m[[0m[0minfo[0m] [0m[0m[32mClientSpec:[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32mSimple Check[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- should run[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should run *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.lang.RuntimeException: Fatal error, cannot connect to Zk.[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.imdea.vcd.Socket.create(Socket.java:59)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.telecomsudparis.smap.SMapServer.<init>(SMapServer.scala:28)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at client.ClientSpec.$anonfun$new$1(ClientSpec.scala:10)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:83)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf$.outcomeOf(OutcomeOf.scala:104)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.Transformer.apply(Transformer.scala:22)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.Transformer.apply(Transformer.scala:20)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.FlatSpecLike$$anon$1.apply(FlatSpecLike.scala:1682)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m

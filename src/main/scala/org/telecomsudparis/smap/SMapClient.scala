@@ -4,7 +4,9 @@ import com.google.protobuf.{ByteString => ProtobufByteString}
 import scala.concurrent._
 import scala.concurrent.duration._
 
-//producer
+/**
+  * Producer Class
+  */
 class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
   var clientId: String = SMapClient.uuid()
   var threadName: String = SMapClient.uuid()

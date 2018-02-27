@@ -1,1 +1,7 @@
 test
+test MapCommand
+test
+test:testOnly *MapCommandSpec
+compile
+test:testOnly *MapCommandSpec
+1+1
