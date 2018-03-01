@@ -169,10 +169,6 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   }
   */
 
-
-  /**
-    *  For READS and SCANS only using first value of map Item.fields
-    */
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
     import org.telecomsudparis.smap.MapCommand.OperationType._
     import org.imdea.vcd.pb.Proto.MessageSet.Status
@@ -181,13 +177,13 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
     //opItem is immutable.Map, doing a conversion.
-    val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
 
     deliveredOperation.operationType match {
       case INSERT =>
         if(msgSetStatus == Status.COMMITTED){
           ringBell(uuid, promiseMap, ResultsCollection())
         } else {
+          val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
           }
@@ -197,6 +193,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         if(msgSetStatus == Status.COMMITTED){
           ringBell(uuid, promiseMap, ResultsCollection())
         } else {
+          val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             if(mapCopy isDefinedAt opItemKey){
               mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
@@ -221,9 +218,12 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           val result: ResultsCollection = {
             if(mapCopy isDefinedAt opItemKey) {
               val tempResult: MMap[String, String] = MMap()
-              opItem.fields.foreach(record => tempResult += (record._1 -> mapCopy(opItemKey)(record._1)))
-              val mapResult = tempResult.toMap
-              val getItem = Item(key = opItemKey, fields = mapResult)
+              for (fieldKey <- opItem.fields.keys) {
+                if(mapCopy(opItemKey) isDefinedAt fieldKey)
+                  tempResult += (fieldKey -> mapCopy(opItemKey)(fieldKey))
+              }
+              //Item.fields is an immutableMap, making a conversion then.
+              val getItem = Item(key = opItemKey, fields = tempResult.toMap)
               ResultsCollection(Seq(getItem))
             } else {
               ResultsCollection()
@@ -239,8 +239,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
           for (elem <- mapCopyScan.values) {
             val tempResult: MMap[String, String] = MMap()
-            for (field <- opItem.fields.keys) {
-              tempResult += (field -> elem(field))
+            for (fieldKey <- opItem.fields.keys) {
+              if(elem isDefinedAt fieldKey)
+                tempResult += (fieldKey -> elem(fieldKey))
             }
             val tempItem = Item(fields = tempResult.toMap)
             seqResults :+= tempItem

@@ -28,12 +28,14 @@ class SMapServiceClient (host: String, port: Int){
   /**
     * Blocking unary call.  Calls executeCmd and returns the response.
     */
-  def sendCmd(request: MapCommand): Unit = {
+  def sendCmd(request: MapCommand): Either[Exception, ResultsCollection] = {
     try {
       val result = blockingStub.executeCmd(request)
+      Right(result)
     } catch {
       case e: StatusRuntimeException =>
         logger.warning(s"RPC failed:${e.getStatus}")
+        Left(e)
     }
   }
 }

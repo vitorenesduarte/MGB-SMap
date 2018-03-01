@@ -9,27 +9,25 @@ import scala.concurrent.duration._
   */
 class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
   var clientId: String = SMapClient.uuid()
-  var threadName: String = SMapClient.uuid()
-  var pendings = scala.collection.mutable.ListBuffer.empty[String]
+  //var pendings = scala.collection.mutable.ListBuffer.empty[String]
 
   if(verbose) {
     println(s"Client Id: $clientId")
-    println(s"Thread Name: $threadName")
   }
 
   def sendCommand(operation: MapCommand): ResultsCollection = {
     val msgMGB = SMapClient.generateMsg(operation)
     val opUuid = OperationUniqueId(operation.operationUuid)
-
+    val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
     val pro = PromiseResults(Promise[ResultsCollection]())
     val fut = pro.pResult.future
 
     mapServer.promiseMap += (opUuid -> pro)
 
-    if(!mapServer.localReads) {
-      mapServer.queue.put(msgMGB)
-    } else {
+    if(mapServer.localReads && isRead ) {
       mapServer.localReadsQueue.put(operation)
+    } else {
+      mapServer.queue.put(msgMGB)
     }
 
     val response = Await.result(fut, Duration.Inf)

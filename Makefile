@@ -12,3 +12,6 @@ install:
 
 clean:
 	mvn clean
+
+testSMapClient:
+	sbt "test:testOnly *SMapClientSpec"

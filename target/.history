@@ -5,3 +5,9 @@ test:testOnly *MapCommandSpec
 compile
 test:testOnly *MapCommandSpec
 1+1
+test:test-only *MapCommand
+test:test-only *MapCommandSpec
+test:testOnly *MapCommandSpec
+test:testOnly MapCommandSpec
+test:testOnly *MapCommandSpec
+test:testOnly *SMapClientSpec
