@@ -24,7 +24,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
 
     mapServer.promiseMap += (opUuid -> pro)
 
-    if(mapServer.localReads && isRead ) {
+    if(mapServer.localReads && isRead) {
       mapServer.localReadsQueue.put(operation)
     } else {
       mapServer.queue.put(msgMGB)
@@ -36,52 +36,8 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
   }
 
 
-  /*
-  def sendPut(key: String, data: B): resultsType = {
-    val uid: String = VCDMapClient.uuid()
-    val putObj = Put(key, data, uid, threadName)
-    val msgSet = VCDMapClient.generateMsgSet(key, putObj)
-
-    val pro = Promise[resultsType]()
-    val fut = pro.future
-
-    mapServer.promiseMap += (uid -> pro)
-    mapServer.queue.put(msgSet)
-
-    val response = Await.result(fut, Duration.Inf)
-    mapServer.promiseMap -= uid
-    response
-  }
-  */
 
   /*
-  def sendInsert(key: String, data: B): resultsType = {
-    // waitLastCall()
-    //val sayMyName = Thread.currentThread().getName()
-
-    val uid: String = threadName+SMapClient.uuid()
-    //val insertObj = Insert(key, data, uid, sayMyName)
-    val insertObj = Insert(key, data, uid, threadName)
-
-    //val msgSet = VCDMapClient.generateMsgSet(key, insertObj)
-    val msg = SMapClient.generateMsg(key, insertObj)
-
-    val writePromise = Promise[Boolean]()
-    pendings += uid
-    mapServer.pendingMap += (uid ->  writePromise)
-
-    val pro = Promise[resultsType]()
-    val fut = pro.future
-    mapServer.promiseMap += (uid -> pro)
-
-    mapServer.queue.put(msg)
-
-    val response = Await.result(fut, Duration.Inf)
-    mapServer.promiseMap -= uid
-
-    response
-  }
-
   def sendGet(key: String): resultsType = {
     waitPendings()
     val uid: String = threadName+SMapClient.uuid()
@@ -131,53 +87,6 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
     response
   }
 
-  def sendDelete(key: String): resultsType = {
-    // waitLastCall()
-    val uid: String = threadName+SMapClient.uuid()
-    val delObj = Delete(key, uid, threadName)
-    //val msgSet = VCDMapClient.generateMsgSet(key, delObj)
-    val msg = SMapClient.generateMsg(key, delObj)
-
-    val writePromise = Promise[Boolean]()
-    pendings += uid
-    mapServer.pendingMap += (uid ->  writePromise)
-
-    val pro = Promise[resultsType]()
-    val fut = pro.future
-    mapServer.promiseMap += (uid -> pro)
-
-    mapServer.queue.put(msg)
-
-    val response = Await.result(fut, Duration.Inf)
-    mapServer.promiseMap -= uid
-
-    response
-  }
-
-  def sendScan(startingKey: String, recordCount: Integer): resultsType = {
-    waitPendings()
-
-    val uid: String = threadName+SMapClient.uuid()
-    val scanObj = Scan(startingKey, recordCount, uid, threadName)
-
-    //val msgSet = VCDMapClient.generateMsgSet(startingKey, scanObj)
-    val msg = SMapClient.generateMsg(startingKey, scanObj)
-
-    val pro = Promise[resultsType]()
-    val fut = pro.future
-
-    mapServer.promiseMap += (uid -> pro)
-
-    if(!mapServer.localReads) {
-      mapServer.queue.put(msg)
-    } else {
-    mapServer.localReadsQueue.put(scanObj)
-    }
-
-    val response = Await.result(fut, Duration.Inf)
-    mapServer.promiseMap -= uid
-    response
-  }
 
   def waitPendings(): Unit = {
     if (pendings.nonEmpty) {

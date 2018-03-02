@@ -20,6 +20,7 @@ class SMapServiceClient (host: String, port: Int){
       .build()
 
   val blockingStub = smapGrpc.blockingStub(channel)
+  //val asyncStub = smapGrpc.stub(channel)
 
   def shutdown(): Unit = channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
 

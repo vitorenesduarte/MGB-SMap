@@ -5,7 +5,7 @@
 
 package org.telecomsudparis.smap
 
-import scala.collection.JavaConverters._
+
 
 @SerialVersionUID(0L)
 final case class ResultsCollection(
@@ -68,16 +68,8 @@ final case class ResultsCollection(
     def companion = org.telecomsudparis.smap.ResultsCollection
 }
 
-object ResultsCollection extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.ResultsCollection] with com.trueaccord.scalapb.JavaProtoSupport[org.telecomsudparis.smap.ResultsCollection, pb.Smap.ResultsCollection] {
-  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.ResultsCollection] with com.trueaccord.scalapb.JavaProtoSupport[org.telecomsudparis.smap.ResultsCollection, pb.Smap.ResultsCollection] = this
-  def toJavaProto(scalaPbSource: org.telecomsudparis.smap.ResultsCollection): pb.Smap.ResultsCollection = {
-    val javaPbOut = pb.Smap.ResultsCollection.newBuilder
-    javaPbOut.addAllResults(scalaPbSource.results.map(org.telecomsudparis.smap.Item.toJavaProto)(_root_.scala.collection.breakOut).asJava)
-    javaPbOut.build
-  }
-  def fromJavaProto(javaPbSource: pb.Smap.ResultsCollection): org.telecomsudparis.smap.ResultsCollection = org.telecomsudparis.smap.ResultsCollection(
-    results = javaPbSource.getResultsList.asScala.map(org.telecomsudparis.smap.Item.fromJavaProto)(_root_.scala.collection.breakOut)
-  )
+object ResultsCollection extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.ResultsCollection] {
+  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.ResultsCollection] = this
   def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): org.telecomsudparis.smap.ResultsCollection = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields

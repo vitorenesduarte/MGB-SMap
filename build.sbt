@@ -8,6 +8,7 @@ scalaVersion := "2.12.3"
 
 // disable using the Scala version in output paths and artifacts
 crossPaths := false
+scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")
 
 /*
 scalacOptions in Global ++= Seq(
@@ -34,8 +35,7 @@ resolvers += Resolver.mavenLocal
 
 //For ScalaPB:
 PB.targets in Compile := Seq(
-  PB.gens.java -> (sourceManaged in Compile).value,
-  scalapb.gen(javaConversions = true) -> (sourceManaged in Compile).value
+   scalapb.gen() -> (sourceManaged in Compile).value
 )
 
 libraryDependencies ++= Dependencies.commonDependencies

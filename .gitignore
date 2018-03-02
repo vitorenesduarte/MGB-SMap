@@ -2,6 +2,7 @@
 .idea/
 *.class
 target/streams/
+target/resolution-cache/
 target/classes/
 project/project/
 project/target/

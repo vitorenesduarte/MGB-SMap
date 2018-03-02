@@ -35,6 +35,7 @@ object SMapServiceServer extends App {
   //TODO: get server parameters from properties
 
   //Zookeeper host & port
+  /*
   val zhost: String = System.getProperties.getProperty("zhost")
   val zport: String = System.getProperties.getProperty("zport")
   val javaClientConfig = Array("-zk=" + zhost + ":" + zport)
@@ -42,10 +43,10 @@ object SMapServiceServer extends App {
   val localReads: Boolean = System.getProperties.getProperty("lread").toBoolean
   val verbose: Boolean = System.getProperties.getProperty("verbose").toBoolean
 
-  var serviceServer = new SMapServer(localReads, verbose, javaClientConfig)
-  var serviceClient = new SMapClient(true, serviceServer)
-
-  serviceServer.serverInit()
+  //var serviceServer = new SMapServer(localReads, verbose, javaClientConfig)
+  */
+  var serviceServer = new SMapServer(localReads = true, verbose = true, Array(""))
+  var serviceClient = new SMapClient(verbose = true, mapServer = serviceServer)
 
   val server = new SMapServiceServer(
     ServerBuilder
@@ -59,5 +60,6 @@ object SMapServiceServer extends App {
       .build()
   )
   server.start()
+  serviceServer.serverInit()
   server.blockUntilShutdown()
 }

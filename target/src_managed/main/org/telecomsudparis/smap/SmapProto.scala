@@ -32,8 +32,12 @@ object SmapProto extends _root_.com.trueaccord.scalapb.GeneratedFileObject {
     val scalaProto = com.google.protobuf.descriptor.FileDescriptorProto.parseFrom(ProtoBytes)
     _root_.scalapb.descriptors.FileDescriptor.buildFrom(scalaProto, dependencies.map(_.scalaDescriptor))
   }
-  lazy val javaDescriptor: com.google.protobuf.Descriptors.FileDescriptor =
-    pb.Smap.getDescriptor()
+  lazy val javaDescriptor: com.google.protobuf.Descriptors.FileDescriptor = {
+    val javaProto = com.google.protobuf.DescriptorProtos.FileDescriptorProto.parseFrom(ProtoBytes)
+    com.google.protobuf.Descriptors.FileDescriptor.buildFrom(javaProto, Array(
+      com.trueaccord.scalapb.scalapb.ScalapbProto.javaDescriptor
+    ))
+  }
   @deprecated("Use javaDescriptor instead. In a future version this will refer to scalaDescriptor.", "ScalaPB 0.5.47")
   def descriptor: com.google.protobuf.Descriptors.FileDescriptor = javaDescriptor
 }

@@ -176,13 +176,13 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val uuid = OperationUniqueId(deliveredOperation.operationUuid)
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
-    //opItem is immutable.Map, doing a conversion.
 
     deliveredOperation.operationType match {
       case INSERT =>
         if(msgSetStatus == Status.COMMITTED){
           ringBell(uuid, promiseMap, ResultsCollection())
         } else {
+          //opItem is immutable.Map, doing a conversion.
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)

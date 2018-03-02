@@ -15,3 +15,9 @@ clean:
 
 testSMapClient:
 	sbt "test:testOnly *SMapClientSpec"
+
+testSMapServiceClient:
+	sbt "test:testOnly *SMapServiceClientSpec"
+
+runServiceServer:
+	sbt "runMain org.telecomsudparis.smap.SMapServiceServer"
