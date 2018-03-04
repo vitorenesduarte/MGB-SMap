@@ -18,26 +18,24 @@ object SmapProto extends _root_.com.trueaccord.scalapb.GeneratedFileObject {
   )
   private lazy val ProtoBytes: Array[Byte] =
       com.trueaccord.scalapb.Encoding.fromBase64(scala.collection.Seq(
-  """CgpzbWFwLnByb3RvEgJwYhoVc2NhbGFwYi9zY2FsYXBiLnByb3RvIrYCCgpNYXBDb21tYW5kEhwKBGl0ZW0YASABKAsyCC5wY
-  i5JdGVtUgRpdGVtEhoKCHN0YXJ0S2V5GAIgASgJUghzdGFydEtleRIgCgtyZWNvcmRjb3VudBgDIAEoBVILcmVjb3JkY291bnQSG
-  goIY2FsbGVySWQYBCABKAlSCGNhbGxlcklkEiQKDW9wZXJhdGlvblV1aWQYBSABKAlSDW9wZXJhdGlvblV1aWQSQgoNb3BlcmF0a
-  W9uVHlwZRgGIAEoDjIcLnBiLk1hcENvbW1hbmQuT3BlcmF0aW9uVHlwZVINb3BlcmF0aW9uVHlwZSJGCg1PcGVyYXRpb25UeXBlE
-  goKBklOU0VSVBAAEgcKA0dFVBABEgoKBlVQREFURRACEgoKBkRFTEVURRADEggKBFNDQU4QBCKBAQoESXRlbRIQCgNrZXkYASABK
-  AlSA2tleRIsCgZmaWVsZHMYAiADKAsyFC5wYi5JdGVtLkZpZWxkc0VudHJ5UgZmaWVsZHMaOQoLRmllbGRzRW50cnkSEAoDa2V5G
-  AEgASgJUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbHVlOgI4ASI3ChFSZXN1bHRzQ29sbGVjdGlvbhIiCgdyZXN1bHRzGAEgAygLM
-  ggucGIuSXRlbVIHcmVzdWx0czI9CgRzbWFwEjUKCkV4ZWN1dGVDbWQSDi5wYi5NYXBDb21tYW5kGhUucGIuUmVzdWx0c0NvbGxlY
-  3Rpb24iAEIf4j8cChhvcmcudGVsZWNvbXN1ZHBhcmlzLnNtYXAQAWIGcHJvdG8z"""
+  """CgpzbWFwLnByb3RvEhtvcmcudGVsZWNvbXN1ZHBhcmlzLnNtYXAucGIaFXNjYWxhcGIvc2NhbGFwYi5wcm90byLoAgoKTWFwQ
+  29tbWFuZBI1CgRpdGVtGAEgASgLMiEub3JnLnRlbGVjb21zdWRwYXJpcy5zbWFwLnBiLkl0ZW1SBGl0ZW0SGgoIc3RhcnRLZXkYA
+  iABKAlSCHN0YXJ0S2V5EiAKC3JlY29yZGNvdW50GAMgASgFUgtyZWNvcmRjb3VudBIaCghjYWxsZXJJZBgEIAEoCVIIY2FsbGVyS
+  WQSJAoNb3BlcmF0aW9uVXVpZBgFIAEoCVINb3BlcmF0aW9uVXVpZBJbCg1vcGVyYXRpb25UeXBlGAYgASgOMjUub3JnLnRlbGVjb
+  21zdWRwYXJpcy5zbWFwLnBiLk1hcENvbW1hbmQuT3BlcmF0aW9uVHlwZVINb3BlcmF0aW9uVHlwZSJGCg1PcGVyYXRpb25UeXBlE
+  goKBklOU0VSVBAAEgcKA0dFVBABEgoKBlVQREFURRACEgoKBkRFTEVURRADEggKBFNDQU4QBCKaAQoESXRlbRIQCgNrZXkYASABK
+  AlSA2tleRJFCgZmaWVsZHMYAiADKAsyLS5vcmcudGVsZWNvbXN1ZHBhcmlzLnNtYXAucGIuSXRlbS5GaWVsZHNFbnRyeVIGZmllb
+  GRzGjkKC0ZpZWxkc0VudHJ5EhAKA2tleRgBIAEoCVIDa2V5EhQKBXZhbHVlGAIgASgJUgV2YWx1ZToCOAEiUAoRUmVzdWx0c0Nvb
+  GxlY3Rpb24SOwoHcmVzdWx0cxgBIAMoCzIhLm9yZy50ZWxlY29tc3VkcGFyaXMuc21hcC5wYi5JdGVtUgdyZXN1bHRzMm8KBHNtY
+  XASZwoKRXhlY3V0ZUNtZBInLm9yZy50ZWxlY29tc3VkcGFyaXMuc21hcC5wYi5NYXBDb21tYW5kGi4ub3JnLnRlbGVjb21zdWRwY
+  XJpcy5zbWFwLnBiLlJlc3VsdHNDb2xsZWN0aW9uIgBCH+I/HAoYb3JnLnRlbGVjb21zdWRwYXJpcy5zbWFwEAFiBnByb3RvMw=="""
       ).mkString)
   lazy val scalaDescriptor: _root_.scalapb.descriptors.FileDescriptor = {
     val scalaProto = com.google.protobuf.descriptor.FileDescriptorProto.parseFrom(ProtoBytes)
     _root_.scalapb.descriptors.FileDescriptor.buildFrom(scalaProto, dependencies.map(_.scalaDescriptor))
   }
-  lazy val javaDescriptor: com.google.protobuf.Descriptors.FileDescriptor = {
-    val javaProto = com.google.protobuf.DescriptorProtos.FileDescriptorProto.parseFrom(ProtoBytes)
-    com.google.protobuf.Descriptors.FileDescriptor.buildFrom(javaProto, Array(
-      com.trueaccord.scalapb.scalapb.ScalapbProto.javaDescriptor
-    ))
-  }
+  lazy val javaDescriptor: com.google.protobuf.Descriptors.FileDescriptor =
+    org.telecomsudparis.smap.pb.Smap.getDescriptor()
   @deprecated("Use javaDescriptor instead. In a future version this will refer to scalaDescriptor.", "ScalaPB 0.5.47")
   def descriptor: com.google.protobuf.Descriptors.FileDescriptor = javaDescriptor
 }

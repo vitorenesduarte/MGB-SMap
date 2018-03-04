@@ -4,13 +4,13 @@ object smapGrpc {
   val METHOD_EXECUTE_CMD: _root_.io.grpc.MethodDescriptor[org.telecomsudparis.smap.MapCommand, org.telecomsudparis.smap.ResultsCollection] =
     _root_.io.grpc.MethodDescriptor.newBuilder()
       .setType(_root_.io.grpc.MethodDescriptor.MethodType.UNARY)
-      .setFullMethodName(_root_.io.grpc.MethodDescriptor.generateFullMethodName("pb.smap", "ExecuteCmd"))
+      .setFullMethodName(_root_.io.grpc.MethodDescriptor.generateFullMethodName("org.telecomsudparis.smap.pb.smap", "ExecuteCmd"))
       .setRequestMarshaller(new com.trueaccord.scalapb.grpc.Marshaller(org.telecomsudparis.smap.MapCommand))
       .setResponseMarshaller(new com.trueaccord.scalapb.grpc.Marshaller(org.telecomsudparis.smap.ResultsCollection))
       .build()
   
   val SERVICE: _root_.io.grpc.ServiceDescriptor =
-    _root_.io.grpc.ServiceDescriptor.newBuilder("pb.smap")
+    _root_.io.grpc.ServiceDescriptor.newBuilder("org.telecomsudparis.smap.pb.smap")
       .setSchemaDescriptor(new _root_.com.trueaccord.scalapb.grpc.ConcreteProtoFileDescriptorSupplier(org.telecomsudparis.smap.SmapProto.javaDescriptor))
       .addMethod(METHOD_EXECUTE_CMD)
       .build()

@@ -1,5 +1,8 @@
-SMAP_JAR=target/mgbsmap-0.1-SNAPSHOT.jar
+SMAP_JAR=target/mgb-smap-0.1-SNAPSHOT.jar
 SMAP_POM=target/mgb-smap-0.1-SNAPSHOT.pom 
+
+compile:
+	sbt compile
 
 poms:
 	sbt makePom

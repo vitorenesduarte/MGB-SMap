@@ -157,8 +157,26 @@ final case class MapCommand(
     def companion = org.telecomsudparis.smap.MapCommand
 }
 
-object MapCommand extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.MapCommand] {
-  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.MapCommand] = this
+object MapCommand extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.MapCommand] with com.trueaccord.scalapb.JavaProtoSupport[org.telecomsudparis.smap.MapCommand, org.telecomsudparis.smap.pb.Smap.MapCommand] {
+  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[org.telecomsudparis.smap.MapCommand] with com.trueaccord.scalapb.JavaProtoSupport[org.telecomsudparis.smap.MapCommand, org.telecomsudparis.smap.pb.Smap.MapCommand] = this
+  def toJavaProto(scalaPbSource: org.telecomsudparis.smap.MapCommand): org.telecomsudparis.smap.pb.Smap.MapCommand = {
+    val javaPbOut = org.telecomsudparis.smap.pb.Smap.MapCommand.newBuilder
+    scalaPbSource.item.map(org.telecomsudparis.smap.Item.toJavaProto).foreach(javaPbOut.setItem)
+    javaPbOut.setStartKey(scalaPbSource.startKey)
+    javaPbOut.setRecordcount(scalaPbSource.recordcount)
+    javaPbOut.setCallerId(scalaPbSource.callerId)
+    javaPbOut.setOperationUuid(scalaPbSource.operationUuid)
+    javaPbOut.setOperationTypeValue(scalaPbSource.operationType.value)
+    javaPbOut.build
+  }
+  def fromJavaProto(javaPbSource: org.telecomsudparis.smap.pb.Smap.MapCommand): org.telecomsudparis.smap.MapCommand = org.telecomsudparis.smap.MapCommand(
+    item = if (javaPbSource.hasItem) Some(org.telecomsudparis.smap.Item.fromJavaProto(javaPbSource.getItem)) else None,
+    startKey = javaPbSource.getStartKey,
+    recordcount = javaPbSource.getRecordcount.intValue,
+    callerId = javaPbSource.getCallerId,
+    operationUuid = javaPbSource.getOperationUuid,
+    operationType = org.telecomsudparis.smap.MapCommand.OperationType.fromJavaValue(javaPbSource.getOperationType)
+  )
   def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): org.telecomsudparis.smap.MapCommand = {
     require(__fieldsMap.keys.forall(_.getContainingType() == javaDescriptor), "FieldDescriptor does not match message type.")
     val __fields = javaDescriptor.getFields
@@ -267,6 +285,8 @@ object MapCommand extends com.trueaccord.scalapb.GeneratedMessageCompanion[org.t
     }
     def javaDescriptor: _root_.com.google.protobuf.Descriptors.EnumDescriptor = org.telecomsudparis.smap.MapCommand.javaDescriptor.getEnumTypes.get(0)
     def scalaDescriptor: _root_.scalapb.descriptors.EnumDescriptor = org.telecomsudparis.smap.MapCommand.scalaDescriptor.enums(0)
+    def fromJavaValue(pbJavaSource: org.telecomsudparis.smap.pb.Smap.MapCommand.OperationType): OperationType = fromValue(pbJavaSource.getNumber)
+    def toJavaValue(pbScalaSource: OperationType): org.telecomsudparis.smap.pb.Smap.MapCommand.OperationType = org.telecomsudparis.smap.pb.Smap.MapCommand.OperationType.forNumber(pbScalaSource.value)
   }
   implicit class MapCommandLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, org.telecomsudparis.smap.MapCommand]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, org.telecomsudparis.smap.MapCommand](_l) {
     def item: _root_.com.trueaccord.lenses.Lens[UpperPB, org.telecomsudparis.smap.Item] = field(_.getItem)((c_, f_) => c_.copy(item = Some(f_)))

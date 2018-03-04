@@ -37,8 +37,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   @volatile var stop = false
 
   /**
-  * Using implicit conversions, definition at package.scala.
-  */
+    * Using implicit conversions, definition at package.scala.
+    */
 
   var receiveMessages: Thread = new Thread(() => receiveLoop)
   var consume: Thread = new Thread(()=> consumeLocally)
@@ -46,8 +46,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   var pool: ExecutorService = Executors.newFixedThreadPool(3)
 
   /**
-  * Lock definition to properly access mapCopy when doing local reads.
-  */
+    * Lock definition to properly access mapCopy when doing local reads.
+    */
   var lock = new ReentrantReadWriteLock()
 
   if(verbose) {

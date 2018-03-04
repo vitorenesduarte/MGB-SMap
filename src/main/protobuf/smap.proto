@@ -7,7 +7,7 @@ option (scalapb.options) = {
   flat_package: true
 };
 
-package pb;
+package org.telecomsudparis.smap.pb;
 
 message MapCommand {
     Item item = 1;

@@ -35,7 +35,9 @@ resolvers += Resolver.mavenLocal
 
 //For ScalaPB:
 PB.targets in Compile := Seq(
-   scalapb.gen() -> (sourceManaged in Compile).value
+   //scalapb.gen() -> (sourceManaged in Compile).value
+   PB.gens.java -> (sourceManaged in Compile).value,
+   scalapb.gen(javaConversions=true) -> (sourceManaged in Compile).value
 )
 
 libraryDependencies ++= Dependencies.commonDependencies

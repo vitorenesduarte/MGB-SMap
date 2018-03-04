@@ -39,6 +39,7 @@ class SMapServiceClient (host: String, port: Int){
         Left(e)
     }
   }
+
 }
 
 object SMapServiceClient extends App {

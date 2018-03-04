@@ -72,17 +72,26 @@ class SMapClientSpec extends FlatSpec with Matchers {
 
     val getItem = Item(key = "vehicles", fields = Map("car" -> "", "motorbike" -> ""))
     val getMapCommand = MapCommand(
-      item = Some(getItem), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = GET
+      item = Some(getItem),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = GET
     )
 
     val updateItem = Item(key = "vehicles", fields = Map("car" -> "green", "motorbike" -> "blue"))
     val updateMapCommand = MapCommand(
-      item = Some(updateItem), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = UPDATE
+      item = Some(updateItem),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = UPDATE
     )
 
     val getItem2 = Item(key = "vehicles", fields = Map("car" -> "", "motorbike" -> ""))
     val getMapCommand2 = MapCommand(
-      item = Some(getItem2), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = GET
+      item = Some(getItem2),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = GET
     )
 
     val getAns = c1.sendCommand(getMapCommand)
@@ -109,24 +118,43 @@ class SMapClientSpec extends FlatSpec with Matchers {
     val updateItem5 = Item(key = "vehicles5", fields = Map("car5" -> "blue", "motorbike5" -> "white"))
 
     val updateMapCommand1 = MapCommand(
-      item = Some(updateItem1), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = UPDATE
+      item = Some(updateItem1),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = UPDATE
     )
     val updateMapCommand2 = MapCommand(
-      item = Some(updateItem2), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = UPDATE
+      item = Some(updateItem2),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = UPDATE
     )
     val updateMapCommand3 = MapCommand(
-      item = Some(updateItem3), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = UPDATE
+      item = Some(updateItem3),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = UPDATE
     )
     val updateMapCommand4 = MapCommand(
-      item = Some(updateItem4), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = UPDATE
+      item = Some(updateItem4),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = UPDATE
     )
     val updateMapCommand5 = MapCommand(
-      item = Some(updateItem5), callerId = Thread.currentThread().getName, operationUuid = java.util.UUID.randomUUID.toString, operationType = UPDATE
+      item = Some(updateItem5),
+      callerId = Thread.currentThread().getName,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = UPDATE
     )
 
     val scanFields = Item(fields = Map("car1"->"","motorbike1"->"", "car2" -> "", "car3"->""))
     val scanMapCommand = MapCommand(
-      item = Some(scanFields), startKey = "vehicles1", recordcount = 3,operationUuid = java.util.UUID.randomUUID.toString, operationType = SCAN
+      item = Some(scanFields),
+      startKey = "vehicles1",
+      recordcount = 3,
+      operationUuid = java.util.UUID.randomUUID.toString,
+      operationType = SCAN
     )
 
     c1.sendCommand(updateMapCommand1)
