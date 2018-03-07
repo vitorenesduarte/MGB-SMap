@@ -15,7 +15,8 @@ object Dependencies {
     "io.grpc"                %  "grpc-netty"           % "1.8.0",
     "com.trueaccord.scalapb" %% "scalapb-runtime-grpc" % com.trueaccord.scalapb.compiler.Version.scalapbVersion,
     // for JSON conversion
-    "com.trueaccord.scalapb" %% "scalapb-json4s"       % "0.3.0"
+    "com.trueaccord.scalapb" %% "scalapb-json4s"       % "0.3.0",
+    "com.github.scopt" %% "scopt" % "3.7.0"
   )
 
 }

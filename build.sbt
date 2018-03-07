@@ -6,6 +6,8 @@ organization := "org.telecomsudparis.smap"
 version := "0.1-SNAPSHOT"
 scalaVersion := "2.12.3"
 
+//publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
+
 // disable using the Scala version in output paths and artifacts
 crossPaths := false
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")

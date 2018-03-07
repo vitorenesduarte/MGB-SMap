@@ -10,8 +10,16 @@ ADD target/$JAR $NAME/
 
 WORKDIR $NAME
 
-CMD java -jar $JAR zhost=${ZHOST} \
-                   zport=${ZPORT} \
-                   port=${PORT} \
-                   lread=${LREAD} \
-                   verbose=${VERBOSE}
+ENV ZHOST localhost
+ENV ZPORT 2181
+ENV SERVERPORT 8980
+ENV LOCALREADS true
+ENV TIMESTAMP undefined
+ENV VERBOSE true
+
+CMD java -jar $JAR zkh=${ZHOST} \
+                   zkp=${ZPORT} \
+                   sp=${SERVERPORT} \
+                   lr=${LOCALREADS} \
+                   ts=${TIMESTAMP} \
+                   vb=${VERBOSE}

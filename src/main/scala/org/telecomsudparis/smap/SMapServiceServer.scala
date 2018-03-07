@@ -32,34 +32,57 @@ class SMapServiceServer(server: Server) {
 }
 
 object SMapServiceServer extends App {
-  //TODO: get server parameters from properties
+  val parser = new scopt.OptionParser[ServerConfig]("SMapServiceServer") {
+    head("SMapServiceServer", "0.1-SNAPSHOT")
+    opt[Int]("serverPort").abbr("sp").action( (x, c) =>
+      c.copy(serverPort = x) ).text("Server Port is an integer property. Default: 8980")
 
-  //Zookeeper host & port
-  /*
-  val zhost: String = System.getProperties.getProperty("zhost")
-  val zport: String = System.getProperties.getProperty("zport")
-  val javaClientConfig = Array("-zk=" + zhost + ":" + zport)
+    opt[Boolean]("localReads").abbr("lr").action( (x, c) =>
+      c.copy(lReads = x) ).text("Local Reads is an boolean property. Default: true")
 
-  val localReads: Boolean = System.getProperties.getProperty("lread").toBoolean
-  val verbose: Boolean = System.getProperties.getProperty("verbose").toBoolean
+    opt[Boolean]("verbosity").abbr("vb").action( (x, c) =>
+      c.copy(verbosity = x) ).text("Verbosity is an boolean property. Default: true")
 
-  //var serviceServer = new SMapServer(localReads, verbose, javaClientConfig)
-  */
-  var serviceServer = new SMapServer(localReads = true, verbose = true, Array(""))
-  var serviceClient = new SMapClient(verbose = true, mapServer = serviceServer)
+    opt[String]("zookeeperHost").abbr("zkh").action( (x, c) =>
+      c.copy(zkHost = x) ).text("Default is the string: 127.0.0.1")
 
-  val server = new SMapServiceServer(
-    ServerBuilder
-      .forPort(8980)
-      .addService(
-        smapGrpc.bindService(
-          new SMapService(serviceServer, serviceClient),
-          scala.concurrent.ExecutionContext.global
-        )
+    opt[String]("zookeeperPort").abbr("zkp").action( (x, c) =>
+      c.copy(zkPort = x) ).text("Default is the string: 2181")
+
+    opt[String]("timeStamp").abbr("ts").action( (x, c) =>
+      c.copy(timeStamp = x) ).text("Default is the string: undefined")
+
+    help("help").text("prints this usage text")
+  }
+
+  // parser.parse returns Option[C]
+  parser.parse(args, ServerConfig()) match {
+    case Some(config) =>
+
+      var serverSMap = new SMapServer(localReads = config.lReads,
+        verbose = config.verbosity,
+        Array("-zk" + config.zkHost + ":" + config.zkPort))
+
+      var clientSMap = new SMapClient(verbose = config.verbosity,
+        mapServer = serverSMap)
+
+      val server = new SMapServiceServer(
+        ServerBuilder
+          .forPort(config.serverPort)
+          .addService(
+            smapGrpc.bindService(
+              new SMapService(serverSMap, clientSMap),
+              scala.concurrent.ExecutionContext.global
+            )
+          )
+          .build()
       )
-      .build()
-  )
-  server.start()
-  serviceServer.serverInit()
-  server.blockUntilShutdown()
+      server.start()
+      serverSMap.serverInit()
+      server.blockUntilShutdown()
+    case None =>
+    // arguments are bad, error message will have been displayed
+  }
+
+
 }
