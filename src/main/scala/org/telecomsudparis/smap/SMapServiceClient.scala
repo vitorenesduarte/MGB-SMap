@@ -44,7 +44,7 @@ object SMapServiceClient {
   /**
     * Contacts Zookeeper and outputs closest host
     */
-  def zkGetClosest(config: ClientConfig): String = synchronized {
+  def zkGetClosest(config: ClientConfig): String = {
     val zkConfig: String = config.zkHost + ":" + config.zkHost
     val timeStamp: String = config.timeStamp
     val root = "/" + timeStamp

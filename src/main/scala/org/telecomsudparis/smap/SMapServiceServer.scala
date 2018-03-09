@@ -58,10 +58,9 @@ object SMapServiceServer extends App {
   // parser.parse returns Option[C]
   parser.parse(args, ServerConfig()) match {
     case Some(config) =>
-
       var serverSMap = new SMapServer(localReads = config.lReads,
         verbose = config.verbosity,
-        Array("-zk" + config.zkHost + ":" + config.zkPort))
+        Array("-zk " + config.zkHost + ":" + config.zkPort))
 
       var clientSMap = new SMapClient(verbose = config.verbosity,
         mapServer = serverSMap)
