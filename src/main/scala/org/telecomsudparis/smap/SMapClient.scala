@@ -12,7 +12,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
   //var pendings = scala.collection.mutable.ListBuffer.empty[String]
 
   if(verbose) {
-    println(s"Client Id: $clientId")
+    println(s"SMapClient Id: $clientId")
   }
 
   def sendCommand(operation: MapCommand): ResultsCollection = {

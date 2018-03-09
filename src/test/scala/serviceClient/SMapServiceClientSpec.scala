@@ -17,8 +17,8 @@ class SMapServiceClientSpec extends FlatSpec with Matchers {
 
     val updateMapCommand1 = MapCommand(
       item = Some(updateItem1),
-      callerId = Thread.currentThread().getName,
-      operationUuid = java.util.UUID.randomUUID.toString,
+      callerId = Thread.currentThread().getName + SMapClient.uuid(),
+      operationUuid = SMapClient.uuid(),
       operationType = UPDATE
     )
 
@@ -27,12 +27,12 @@ class SMapServiceClientSpec extends FlatSpec with Matchers {
 
     val getMapCommand2 = MapCommand(
       item = Some(getItem2),
-      callerId = Thread.currentThread().getName,
-      operationUuid = java.util.UUID.randomUUID.toString,
+      callerId = Thread.currentThread().getName + SMapClient.uuid(),
+      operationUuid = SMapClient.uuid(),
       operationType = GET
     )
 
-    val client = new SMapServiceClient("localhost", 8980)
+    val client = new SMapServiceClient(ClientConfig())
 
     val updateItemResult = client.sendCmd(updateMapCommand1)
     val getItemResult = client.sendCmd(getMapCommand2)

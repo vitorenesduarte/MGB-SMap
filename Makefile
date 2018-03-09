@@ -24,3 +24,6 @@ testSMapServiceClient:
 
 runServiceServer:
 	sbt "runMain org.telecomsudparis.smap.SMapServiceServer"
+
+runServiceStandard:
+	sbt "runMain org.telecomsudparis.smap.SMapServiceServer -sp 8980 -lr true -vb true -zkh 127.0.0.1 -zkp 2181 -ts undefined"

@@ -45,7 +45,7 @@ object SMapServiceClient {
     * Contacts Zookeeper and outputs closest host
     */
   def zkGetClosest(config: ClientConfig): String = {
-    val zkConfig: String = config.zkHost + ":" + config.zkHost
+    val zkConfig: String = config.zkHost + ":" + config.zkPort
     val timeStamp: String = config.timeStamp
     val root = "/" + timeStamp
     var nodes: List[Proto.NodeSpec] = List()
@@ -56,7 +56,7 @@ object SMapServiceClient {
       val zk = new ZooKeeper(zkConfig + "/", 5000, new ZkWatcher())
 
       for (child <- zk.getChildren(root, null).asScala) {
-        val path = root + "/" + child
+        val path: String = root + "/" + child
         val data = zk.getData(path, null, null)
         nodes :+= Proto.NodeSpec.parseFrom(data)
       }
