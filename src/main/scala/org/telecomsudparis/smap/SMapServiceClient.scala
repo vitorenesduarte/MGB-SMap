@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
 class SMapServiceClient(cfg: ClientConfig) {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
 
-  val host: String = SMapServiceClient.zkGetClosest(cfg)
+  val host: String = cfg.host
   val channel =
     ManagedChannelBuilder
       .forAddress(host, cfg.serverPort)
@@ -85,8 +85,8 @@ object SMapServiceClient {
         min = delay
         closest = Some(n)
       }
-      println("SMap: Closest is " + closest.get.toString)
     }
+    println("SMap: Closest is " + closest.get.toString)
 
     closest.get.getIp
   }

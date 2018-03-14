@@ -23,7 +23,7 @@ class SMapServiceClientSpec extends FlatSpec with Matchers {
     )
 
     val getItem2 = Item(key = "vehicles1",
-      fields = Map("car1" -> "", "motorbike1" -> ""))
+      fields = Map[String,String]())
 
     val getMapCommand2 = MapCommand(
       item = Some(getItem2),
@@ -32,9 +32,12 @@ class SMapServiceClientSpec extends FlatSpec with Matchers {
       operationType = GET
     )
 
-    val client = new SMapServiceClient(ClientConfig())
+    val emptyCfg = ClientConfig()
+    val hostString = SMapServiceClient.zkGetClosest(emptyCfg)
+    val client = new SMapServiceClient(ClientConfig(host = hostString))
 
     val updateItemResult = client.sendCmd(updateMapCommand1)
+    Thread.sleep(1000)
     val getItemResult = client.sendCmd(getMapCommand2)
 
     println(updateItemResult)

@@ -86,7 +86,7 @@ class SMapClientSpec extends FlatSpec with Matchers {
       operationType = UPDATE
     )
 
-    val getItem2 = Item(key = "vehicles", fields = Map("car" -> "", "motorbike" -> ""))
+    val getItem2 = Item(key = "vehicles", fields = Map[String,String]())
     val getMapCommand2 = MapCommand(
       item = Some(getItem2),
       callerId = Thread.currentThread().getName,
@@ -94,18 +94,20 @@ class SMapClientSpec extends FlatSpec with Matchers {
       operationType = GET
     )
 
-    val getAns = c1.sendCommand(getMapCommand)
+    //val getAns = c1.sendCommand(getMapCommand)
     val updateAns = c1.sendCommand(updateMapCommand)
+    Thread.sleep(1000)
     val getAns2 = c1.sendCommand(getMapCommand2)
 
-    println("FIRST GET: \n" + getAns)
-    println("SECOND GET: \n" + getAns2)
+    //println("FIRST GET: \n" + getAns)
+    //println("SECOND GET: \n" + getAns2)
 
     Thread.sleep(1000)
 
     println("SERVERMAP:" + s1.mapCopy)
   }
 
+  /*
   "INSERT SCAN lreads = true" should "run" in {
     val s1 = new SMapServer(localReads = true, verbose = true, config = Array(""))
     s1.serverInit()
@@ -172,4 +174,5 @@ class SMapClientSpec extends FlatSpec with Matchers {
     println("SERVERMAP:" + s1.mapCopy)
     println(scanAns.results.map(r => r.fields).toVector.asJava)
   }
+  */
 }

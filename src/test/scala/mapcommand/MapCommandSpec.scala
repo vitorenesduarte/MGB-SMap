@@ -13,5 +13,4 @@ class MapCommandSpec extends FlatSpec with Matchers {
     )
     println(testMapCommand)
   }
-
 }

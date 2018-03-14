@@ -9,16 +9,29 @@ import scala.concurrent.duration._
   */
 class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
   var clientId: String = SMapClient.uuid()
-  //var pendings = scala.collection.mutable.ListBuffer.empty[String]
+  var pendings = scala.collection.mutable.ListBuffer.empty[CallerId]
 
   if(verbose) {
     println(s"SMapClient Id: $clientId")
   }
 
   def sendCommand(operation: MapCommand): ResultsCollection = {
-    val msgMGB = SMapClient.generateMsg(operation)
     val opUuid = OperationUniqueId(operation.operationUuid)
     val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
+
+    /*
+    //FIXME: Proper define calledId in the YCSB side
+    //To achieve sequential consistency, reads must wait pending writes.
+    if(isRead){
+      //waitPendings()
+    } else {
+      val writePromise = Promise[Boolean]()
+      val callerUuid = CallerId(operation.callerId)
+      pendings += callerUuid
+      mapServer.pendingMap += (callerUuid ->  writePromise)
+    }
+    */
+
     val pro = PromiseResults(Promise[ResultsCollection]())
     val fut = pro.pResult.future
 
@@ -27,6 +40,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
     if(mapServer.localReads && isRead) {
       mapServer.localReadsQueue.put(operation)
     } else {
+      val msgMGB = SMapClient.generateMsg(operation)
       mapServer.queue.put(msgMGB)
     }
 
@@ -34,59 +48,6 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
     mapServer.promiseMap -= opUuid
     response
   }
-
-
-
-  /*
-  def sendGet(key: String): resultsType = {
-    waitPendings()
-    val uid: String = threadName+SMapClient.uuid()
-
-    val getObj = Get(key, uid, threadName)
-
-    //val msgSet = VCDMapClient.generateMsgSet(key, getObj)
-    val msg = SMapClient.generateMsg(key, getObj)
-
-    val pro = Promise[resultsType]()
-    val fut = pro.future
-    mapServer.promiseMap += (uid -> pro)
-
-    if(!mapServer.localReads) {
-      mapServer.queue.put(msg)
-    } else {
-      mapServer.localReadsQueue.put(getObj)
-    }
-
-    val response = Await.result(fut, Duration.Inf)
-    mapServer.promiseMap -= uid
-
-    response
-  }
-
-  def sendUpdate(key: String, data: B): resultsType =  {
-    // waitLastCall()
-    val uid: String = threadName+SMapClient.uuid()
-
-    val updObj = Update(key, data, uid, threadName)
-    //val msgSet = VCDMapClient.generateMsgSet(key, updObj)
-    val msg = SMapClient.generateMsg(key, updObj)
-
-    val writePromise = Promise[Boolean]()
-    pendings += uid
-    mapServer.pendingMap += (uid ->  writePromise)
-
-    val pro = Promise[resultsType]()
-    val fut = pro.future
-    mapServer.promiseMap += (uid -> pro)
-
-    mapServer.queue.put(msg)
-
-    val response = Await.result(fut, Duration.Inf)
-    mapServer.promiseMap -= uid
-
-    response
-  }
-
 
   def waitPendings(): Unit = {
     if (pendings.nonEmpty) {
@@ -98,7 +59,6 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
       pendings.clear()
     }
   }
-  */
 
 }
 
@@ -127,7 +87,7 @@ object SMapClient {
   }
   */
 
-  def generateMsg[B](toMGB: MapCommand): Message = synchronized {
+  def generateMsg(toMGB: MapCommand): Message = synchronized {
     val mgbHash =
       if(toMGB.operationType.isScan || toMGB.operationType.isGet) {
         //hash == new byte[]{0} in case of read ops

@@ -29,7 +29,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   //val dummySocket = DummySocket.create(javaClientConfig)
 
   var mapCopy = MTreeMap[String, MMap[String, String]]()
-  var pendingMap = CTrieMap[OperationUniqueId, Promise[Boolean]]()
+  var pendingMap = CTrieMap[CallerId, Promise[Boolean]]()
   var promiseMap = CTrieMap[OperationUniqueId, PromiseResults]()
   var queue = new LinkedBlockingQueue[Message]()
   var localReadsQueue = new LinkedBlockingQueue[MapCommand]()
@@ -81,17 +81,11 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         msgList.add(m)
         queue.drainTo(msgList)
 
-        val builder = MessageSet.newBuilder()
-        builder.setStatus(MessageSet.Status.START)
-        builder.addAllMessages(msgList)
-        javaSocket.send(builder.build())
+        val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
+        javaSocket.send(mgbMsgSet)
 
         msgList.clear()
-        /*
-        val taking = queue.take()
-        javaSocket.send(taking)
-        */
-        //javaSocket.sendWithDelay(taking)
+
       }
     } catch {
       case ex: InterruptedException =>
@@ -161,19 +155,18 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     }
   }
 
-  /*
-  def ringBellPending(uid: String, pendingM: ConcurrentTrieMap[String, Promise[Boolean]]): Unit = {
-    if(pendingM isDefinedAt uid) {
-      pendingM(uid) success true
+  def ringBellPending(cid: CallerId, pendingM: CTrieMap[CallerId, Promise[Boolean]]): Unit = {
+    if(pendingM isDefinedAt cid) {
+      pendingM(cid) success true
     }
   }
-  */
 
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
     import org.telecomsudparis.smap.MapCommand.OperationType._
     import org.imdea.vcd.pb.Proto.MessageSet.Status
 
     val uuid = OperationUniqueId(deliveredOperation.operationUuid)
+    val cid = CallerId(deliveredOperation.callerId)
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
 
@@ -186,6 +179,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
+            //ringBellPending(cid, pendingMap)
           }
         }
 
@@ -199,6 +193,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
               mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
             } else {
               mapCopy += (opItemKey -> mutableFieldsMap)
+              //ringBellPending(cid, pendingMap)
             }
           }
         }
@@ -209,6 +204,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         } else {
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
+            //ringBellPending(cid, pendingMap)
           }
         }
 
@@ -218,15 +214,18 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           val result: ResultsCollection = {
             if(mapCopy isDefinedAt opItemKey) {
               val tempResult: MMap[String, String] = MMap()
-              for (fieldKey <- opItem.fields.keys) {
+              //From YCSB, if fields set is empty must read all fields
+              val keySet = if(opItem.fields.isEmpty) mapCopy(opItemKey).keys else opItem.fields.keys
+              for (fieldKey <- keySet) {
                 if(mapCopy(opItemKey) isDefinedAt fieldKey)
                   tempResult += (fieldKey -> mapCopy(opItemKey)(fieldKey))
+                //else should do tempResult += (fieldKey -> defaultEmptyValue)
               }
               //Item.fields is an immutableMap, making a conversion then.
               val getItem = Item(key = opItemKey, fields = tempResult.toMap)
               ResultsCollection(Seq(getItem))
             } else {
-              ResultsCollection()
+              ResultsCollection(Seq(Item(key = opItemKey)))
             }
           }
           ringBell(uuid, promiseMap, result)
@@ -239,9 +238,12 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
           for (elem <- mapCopyScan.values) {
             val tempResult: MMap[String, String] = MMap()
-            for (fieldKey <- opItem.fields.keys) {
+            //From YCSB, if fields set is empty must read all fields
+            val keySet = if(opItem.fields.isEmpty) mapCopy(opItemKey).keys else opItem.fields.keys
+            for (fieldKey <- keySet) {
               if(elem isDefinedAt fieldKey)
                 tempResult += (fieldKey -> elem(fieldKey))
+                //else should do tempResult += (fieldKey -> defaultEmptyValue)
             }
             val tempItem = Item(fields = tempResult.toMap)
             seqResults :+= tempItem
@@ -274,8 +276,4 @@ object SMapServer {
     MapCommand.parseFrom(dataMGB.toByteArray)
   }
 
-  //If I define the ordering[A] here,
-  //maybe the java code can then recognize it
-  //when I roll back to VCDMapServer[A,B]
-  //implicit def ipord: Ordering[IntPair] =
 }
