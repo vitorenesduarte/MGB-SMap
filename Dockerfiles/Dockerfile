@@ -6,12 +6,17 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     git \
     maven \
+    curl \
     build-essential
 
-RUN echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
-RUN apt-get update
-RUN apt-get install sbt
+ENV SBT_VERSION 1.0.4
+RUN \
+  curl -L -o sbt-$SBT_VERSION.deb http://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
+  dpkg -i sbt-$SBT_VERSION.deb && \
+  rm sbt-$SBT_VERSION.deb && \
+  apt-get update && \
+  apt-get install sbt && \
+  sbt sbtVersion
 
 ADD https://api.github.com/repos/vitorenesduarte/VCD-java-client/git/refs/heads/zk vcd-java-client-version.json
 RUN git clone -b zk https://github.com/vitorenesduarte/VCD-java-client

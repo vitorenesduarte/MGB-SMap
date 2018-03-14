@@ -14,7 +14,10 @@ install:
 	mvn install:install-file -Dfile=$(SMAP_JAR) -DpomFile=$(SMAP_POM)
 
 clean:
-	mvn clean
+	sbt clean
+
+dockerBuild:
+	 cd Dockerfiles; docker build -t mgb-smap:latest .
 
 testSMapClient:
 	sbt "test:testOnly *SMapClientSpec"
