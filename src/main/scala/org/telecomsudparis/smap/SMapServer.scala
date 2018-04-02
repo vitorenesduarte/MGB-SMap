@@ -234,21 +234,23 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       case SCAN =>
         if(msgSetStatus == Status.DELIVERED){
           var seqResults: Seq[Item] = Seq()
-          val mapCopyScan = (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount)
 
-          for (elem <- mapCopyScan.values) {
-            val tempResult: MMap[String, String] = MMap()
-            //From YCSB, if fields set is empty must read all fields
-            val keySet = if(opItem.fields.isEmpty) mapCopy(opItemKey).keys else opItem.fields.keys
-            for (fieldKey <- keySet) {
-              if(elem isDefinedAt fieldKey)
-                tempResult += (fieldKey -> elem(fieldKey))
+          if(mapCopy isDefinedAt deliveredOperation.startKey) {
+            val mapCopyScan = (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount)
+            for (elem <- mapCopyScan.values) {
+              val tempResult: MMap[String, String] = MMap()
+              //From YCSB, if fields set is empty must read all fields
+              val keySet = if (opItem.fields.isEmpty) mapCopy(deliveredOperation.startKey).keys else opItem.fields.keys
+              for (fieldKey <- keySet) {
+                if (elem isDefinedAt fieldKey)
+                  tempResult += (fieldKey -> elem(fieldKey))
                 //else should do tempResult += (fieldKey -> defaultEmptyValue)
+              }
+              val tempItem = Item(fields = tempResult.toMap)
+              seqResults :+= tempItem
             }
-            val tempItem = Item(fields = tempResult.toMap)
-            seqResults :+= tempItem
           }
-
+          //Returning empty sequence of items in case of nondefined startingKey
           ringBell(uuid, promiseMap, ResultsCollection(seqResults))
         }
 
