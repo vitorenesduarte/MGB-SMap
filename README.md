@@ -2,5 +2,5 @@
 
 1. sbt compile
 2. sbt pack
-3. cd Dockerfiles; docker build -t tfr011/mgb-smap:latest .
+3. docker build -t tfr011/mgb-smap:latest -f Dockerfiles/Dockerfile .
 4. ./localTesting.sh

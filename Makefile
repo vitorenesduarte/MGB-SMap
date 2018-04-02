@@ -17,7 +17,7 @@ clean:
 	sbt clean
 
 dockerBuild:
-	 cd Dockerfiles; docker build -t tfr011/mgb-smap:latest .
+	 docker build -t tfr011/mgb-smap:latest -f Dockerfiles/Dockerfile .
 
 testSMapClient:
 	sbt "test:testOnly *SMapClientSpec"
