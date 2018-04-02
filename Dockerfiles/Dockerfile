@@ -24,7 +24,7 @@ RUN mvn -f VCD-java-client clean install -DskipTests
 
 ADD https://api.github.com/repos/tuanir/MGB-SMap/git/refs/heads/master mgb-smap-version.json
 RUN git clone https://github.com/tuanir/MGB-SMap.git
-RUN make -C MGB-SMap compile jars poms install
+RUN make -C MGB-SMap jars
 
 WORKDIR /app/MGB-SMap
 
@@ -35,9 +35,9 @@ ENV ZHOST 127.0.0.1
 ENV ZPORT 2181
 ENV TIMESTAMP undefined
 
-CMD sbt "runMain org.telecomsudparis.smap.SMapServiceServer -sp ${SERVERPORT} \
+CMD ["sh","-c","target/pack/bin/MGB-SMap -sp ${SERVERPORT} \
                 -lr ${LOCALREADS} \
                 -vb ${VERBOSE} \
                 -zkh ${ZHOST} \
                 -zkp ${ZPORT} \
-                -ts ${TIMESTAMP}"
+                -ts ${TIMESTAMP}"]
