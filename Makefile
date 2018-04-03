@@ -1,6 +1,12 @@
 SMAP_JAR=target/mgb-smap-0.1-SNAPSHOT.jar
 SMAP_POM=target/mgb-smap-0.1-SNAPSHOT.pom 
 
+all:
+	sbt compile
+	sbt pack
+	sbt makePom
+	mvn install:install-file -Dfile=$(SMAP_JAR) -DpomFile=$(SMAP_POM)
+
 compile:
 	sbt compile
 
