@@ -22,10 +22,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 /**
   * Consumer Class
   */
-class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String]) {
+class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String], var retries: Int) {
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
-  var javaSocket = Socket.create(javaClientConfig, 100)
+  var javaSocket = Socket.create(javaClientConfig, retries)
   //val dummySocket = DummySocket.create(javaClientConfig)
 
   var mapCopy = MTreeMap[String, MMap[String, String]]()

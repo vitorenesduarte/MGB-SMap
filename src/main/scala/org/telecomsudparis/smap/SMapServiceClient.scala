@@ -96,7 +96,7 @@ object SMapServiceClient {
   */
 
   /**
-    *  Using VCD-java-client to contacts Zookeeper and output closest host
+    *  Using VCD-java-client to contact Zookeeper and output closest MGB host
     */
   def javaClientGetClosestNode(zkHost: String, zkPort: String): String = {
     val javaConfig = Array("-zk=" + zkHost + ":" + zkPort)

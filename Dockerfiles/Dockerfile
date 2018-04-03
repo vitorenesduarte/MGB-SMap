@@ -35,10 +35,12 @@ ENV VERBOSE true
 ENV ZHOST 127.0.0.1
 ENV ZPORT 2181
 ENV TIMESTAMP undefined
+ENV RETRIES 300
 
 CMD ["sh", "-c", "/app/MGB-SMap/target/pack/bin/MGB-SMap -sp ${SERVERPORT} \
                 -lr ${LOCALREADS} \
                 -vb ${VERBOSE} \
                 -zkh ${ZHOST} \
                 -zkp ${ZPORT} \
+                -rt ${RETRIES} \
                 -ts ${TIMESTAMP}"]
