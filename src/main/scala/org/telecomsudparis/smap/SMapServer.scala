@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String]) {
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
-  var javaSocket = Socket.create(javaClientConfig)
+  var javaSocket = Socket.create(javaClientConfig, 100)
   //val dummySocket = DummySocket.create(javaClientConfig)
 
   var mapCopy = MTreeMap[String, MMap[String, String]]()

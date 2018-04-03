@@ -3,7 +3,10 @@ import Keys._
 
 enablePlugins(PackPlugin)
 name := "MGB-SMap"
+
 packMain := Map("MGB-SMap"->"org.telecomsudparis.smap.SMapServiceServer")
+packJvmOpts := Map("MGB-SMap" -> Seq("-Xmx512m"))
+
 organization := "org.telecomsudparis.smap"
 version := "0.1-SNAPSHOT"
 scalaVersion := "2.12.3"

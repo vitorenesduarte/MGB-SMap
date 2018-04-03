@@ -4,6 +4,7 @@ MAINTAINER TFR <tfr011@gmail.com>
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
+    iputils-ping \
     git \
     maven \
     curl \
