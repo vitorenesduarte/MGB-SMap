@@ -36,11 +36,18 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
 
 #docker run --rm --net host -e "ZHOST=172.17.0.2" -e "SERVERPORT=8980" tfr011/mgb-smap:latest
 
-#docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8980" tfr011/mgb-smap:latest & #>& smap1.txt &
+docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8980" tfr011/mgb-smap:latest & #>& smap1.txt &
 #docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8981" mgb-smap:latest & #>& smap2.txt &
 #docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8982" mgb-smap:latest & #>& smap2.txt &
 
 #echo "RUNNING YCSB"
+
+#./bin/ycsb run mgbsmap -s -P workloads/workloade -threads 2 \
+# -p host=172.17.0.2 \
+# -p port=2181 \
+# -p verbose=false \
+# -p recordcount=100 \
+# -p operationcount=100
 
 #./bin/ycsb run mgbsmap -s -P workloads/workloade -threads 2 \
 # -p host=172.17.0.2 \

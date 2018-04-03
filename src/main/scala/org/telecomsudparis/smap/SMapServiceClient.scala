@@ -1,9 +1,11 @@
 package org.telecomsudparis.smap
+
 import java.util.concurrent.{CountDownLatch, TimeUnit}
 import java.util.logging.Logger
 import org.apache.zookeeper._
 import io.grpc.{ManagedChannelBuilder, Status}
 import org.imdea.vcd.pb.Proto
+import org.imdea.vcd._
 import java.net.InetAddress
 import scala.collection.JavaConverters._
 
@@ -44,6 +46,7 @@ object SMapServiceClient {
   /**
     * Contacts Zookeeper and outputs closest host
     */
+  /*
   def zkGetClosest(config: ClientConfig): String = {
     val zkConfig: String = config.zkHost + ":" + config.zkPort
     val timeStamp: String = config.timeStamp
@@ -89,6 +92,16 @@ object SMapServiceClient {
     println("SMap: Closest is " + closest.get.toString)
 
     closest.get.getIp
+  }
+  */
+
+  /**
+    *  Using VCD-java-client to contacts Zookeeper and output closest host
+    */
+  def javaClientGetClosestNode(zkHost: String, zkPort: String): String = {
+    val javaConfig = Array("-zk=" + zkHost + ":" + zkPort)
+    val hostNode: Proto.NodeSpec = Socket.getClosestNode(Config.parseArgs(javaConfig))
+    hostNode.getIp
   }
 
   private class ZkWatcher() extends Watcher {
