@@ -18,11 +18,14 @@ import scala.collection.mutable.ListBuffer
 import java.util.concurrent.LinkedBlockingQueue
 import java.io.IOException
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.logging.Logger
 
 /**
   * Consumer Class
   */
 class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String], var retries: Int) {
+  val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
+
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
   var javaSocket = Socket.create(javaClientConfig, retries)
@@ -51,8 +54,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   var lock = new ReentrantReadWriteLock()
 
   if(verbose) {
-    println("SMapServer Id: " + serverId)
-    println("Local Reads: " + localReads)
+    logger.info("SMapServer Id: " + serverId)
+    logger.info("SMapServer Local Reads: " + localReads)
   }
 
   /**
@@ -66,7 +69,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       }
     } catch {
       case ex: IOException =>
-        println("Receive Loop Interrupted at SMapServer: " ++ serverId)
+        logger.warning("SMapServer Receive Loop Interrupted: " ++ serverId)
     }
   }
 
@@ -89,7 +92,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       }
     } catch {
       case ex: InterruptedException =>
-        println("Consume Loop Interrupted at SMapServer: " ++ serverId)
+        logger.warning("SMapServer Consume Loop Interrupted at: " ++ serverId)
     }
   }
 
@@ -115,7 +118,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       }
     } catch {
       case ex: InterruptedException =>
-        println("LocalRead Consume Loop Interrupted at SMapServer: " ++ serverId)
+        logger.warning("SMapServer LocalRead Consume Loop Interrupted at: " ++ serverId)
     }
   }
 

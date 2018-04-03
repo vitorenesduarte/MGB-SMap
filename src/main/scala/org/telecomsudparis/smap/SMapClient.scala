@@ -3,16 +3,18 @@ package org.telecomsudparis.smap
 import com.google.protobuf.{ByteString => ProtobufByteString}
 import scala.concurrent._
 import scala.concurrent.duration._
-
+import java.util.logging.Logger
 /**
   * Producer Class
   */
 class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
+  val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
+
   var clientId: String = SMapClient.uuid()
   var pendings = scala.collection.mutable.ListBuffer.empty[CallerId]
 
   if(verbose) {
-    println(s"SMapClient Id: $clientId")
+    logger.info(s"SMapClient Id: $clientId")
   }
 
   def sendCommand(operation: MapCommand): ResultsCollection = {
