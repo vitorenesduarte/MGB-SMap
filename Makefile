@@ -23,7 +23,7 @@ clean:
 	sbt clean
 
 dockerBuild:
-	 docker build -t tfr011/mgb-smap:latest -f Dockerfiles/Dockerfile .
+	 docker build --cpuset-cpus "1,2" -t tfr011/mgb-smap:latest -f Dockerfiles/Dockerfile .
 
 testSMapClient:
 	sbt "test:testOnly *SMapClientSpec"
