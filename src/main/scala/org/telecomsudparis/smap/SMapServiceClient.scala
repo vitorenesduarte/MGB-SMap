@@ -104,9 +104,11 @@ object SMapServiceClient {
     hostNode.getIp
   }
 
+  /*
   private class ZkWatcher() extends Watcher {
     @Override
     def process(watchedEvent: WatchedEvent): Unit = {
     }
   }
+  */
 }

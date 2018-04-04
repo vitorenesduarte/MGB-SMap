@@ -4,7 +4,7 @@ dockIp() {
   docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$@"
 }
 
-docker pull vitorenesduarte/vcd:batching
+docker pull vitorenesduarte/vcd:latest
 docker run --rm -d -p 2181:2181 zookeeper &
 sleep 3
 
@@ -78,7 +78,7 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
 #    -e "RECORDCOUNT=1000" \
 #    -e "OPERATIONCOUNT=1000" \
 #    -e "FAST=true" \
-#    ycsb:latest >& ycsb1.txt &
+#    0track/ycsb:latest >& ycsb1.txt &
 #
 #docker run --rm --net host -e "DB=mgbsmap" \
 #    -e "HOST=${zkAddress}" \
