@@ -34,7 +34,20 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
     -e "CPORT=6002" \
     -p 6002:6002 vitorenesduarte/vcd >& mgb3.txt &
 
-#docker run --rm --net host -e "ZHOST=172.17.0.2" -e "SERVERPORT=8980" tfr011/mgb-smap:latest
+docker run --rm --net host -e "ZHOST=172.17.0.2" -e "SERVERPORT=8980" -e "RETRIES=400" tfr011/mgb-smap:latest
+
+#docker run --rm --net host -e "DB=mgbsmap" \
+#    -e "HOST=${zkAddress}" \
+#    -e "PORT=2181" \
+#    -e "TYPE=run" \
+#    -e "WORKLOAD=workloada" \
+#    -e "SMAPPORT=8980" \
+#    -e "THREADS=2" \
+#    -e "RECORDCOUNT=1000" \
+#    -e "OPERATIONCOUNT=10000" \
+#    -e "FAST=true" \
+#    0track/ycsb:latest
+
 
 #docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8980" -e "RETRIES=600" tfr011/mgb-smap:latest & #>& smap1.txt &
 #docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8981" mgb-smap:latest & #>& smap2.txt &
@@ -67,18 +80,7 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
 # -p smapport=8980 \
 # -p recordcount=100 \
 # -p operationcount=100
-
-#docker run --rm --net host -e "DB=mgbsmap" \
-#    -e "HOST=${zkAddress}" \
-#    -e "PORT=2181" \
-#    -e "TYPE=run" \
-#    -e "WORKLOAD=workloada" \
-#    -e "SMAPPORT=8980" \
-#    -e "THREADS=2" \
-#    -e "RECORDCOUNT=1000" \
-#    -e "OPERATIONCOUNT=1000" \
-#    -e "FAST=true" \
-#    0track/ycsb:latest >& ycsb1.txt &
+# >& ycsb1.txt &
 #
 #docker run --rm --net host -e "DB=mgbsmap" \
 #    -e "HOST=${zkAddress}" \
