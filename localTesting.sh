@@ -34,7 +34,7 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
     -e "CPORT=6002" \
     -p 6002:6002 vitorenesduarte/vcd >& mgb3.txt &
 
-docker run --rm --net host -e "ZHOST=172.17.0.2" -e "SERVERPORT=8980" -e "RETRIES=400" tfr011/mgb-smap:latest
+docker run --rm --net host -e "ZHOST=172.17.0.2" -e "SERVERPORT=8980" -e "RETRIES=400" tfr011/mgb-smap:latest >& smap1.txt &
 
 #docker run --rm --net host -e "DB=mgbsmap" \
 #    -e "HOST=${zkAddress}" \

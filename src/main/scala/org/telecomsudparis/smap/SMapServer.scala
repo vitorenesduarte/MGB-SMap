@@ -85,6 +85,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         queue.drainTo(msgList)
 
         val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
+        //TODO: Catch exception
         javaSocket.send(mgbMsgSet)
 
         msgList.clear()
