@@ -1,8 +1,11 @@
 package org.telecomsudparis.smap
 
+import java.util.concurrent.{ArrayBlockingQueue, ExecutorService, ThreadPoolExecutor, TimeUnit}
 import java.util.logging.Logger
+import java.util.concurrent.{ExecutorService, Executors}
 import scala.util.Properties
 import io.grpc.{Server, ServerBuilder}
+import io.grpc.Channel
 
 class SMapServiceServer(server: Server) {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceServer].getName)
@@ -58,6 +61,9 @@ object SMapServiceServer extends App {
     help("help").text("prints this usage text")
   }
 
+  //val e = new ThreadPoolExecutor(64,128,10,TimeUnit.SECONDS, new ArrayBlockingQueue[Runnable](64))
+  var pool1: ExecutorService = Executors.newFixedThreadPool(128)
+
   // parser.parse returns Option[C]
   parser.parse(args, ServerConfig()) match {
     case Some(config) =>
@@ -74,6 +80,7 @@ object SMapServiceServer extends App {
           .addService(
             smapGrpc.bindService(
               new SMapService(serverSMap, clientSMap),
+              //scala.concurrent.ExecutionContext.fromExecutor(pool1)
               scala.concurrent.ExecutionContext.global
             )
           )

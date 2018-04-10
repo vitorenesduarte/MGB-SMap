@@ -40,7 +40,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
     mapServer.promiseMap += (opUuid -> pro)
 
     if(mapServer.localReads && isRead) {
-      mapServer.localReadsQueue.put(operation)
+     mapServer.localReadsQueue.put(operation)
     } else {
       val msgMGB = SMapClient.generateMsg(operation)
       mapServer.queue.put(msgMGB)

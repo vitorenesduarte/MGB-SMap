@@ -4,8 +4,8 @@ import org.imdea.vcd.pb.Proto._
 import org.imdea.vcd._
 
 import scala.concurrent._
-import ExecutionContext.Implicits.global
-import concurrent.ExecutionContext.Implicits.global._
+//import ExecutionContext.Implicits.global
+//import concurrent.ExecutionContext.Implicits.global._
 import java.util.concurrent.{ExecutorService, Executors}
 
 import scala.collection.concurrent.{TrieMap => CTrieMap}

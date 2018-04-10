@@ -34,7 +34,15 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
     -e "CPORT=6002" \
     -p 6002:6002 vitorenesduarte/vcd >& mgb3.txt &
 
-docker run --rm --net host -e "ZHOST=172.17.0.2" -e "SERVERPORT=8980" -e "RETRIES=400" tfr011/mgb-smap:latest >& smap1.txt &
+
+#./bin/ycsb run mgbsmap -s -P workloads/workloadc -threads 64 \
+# -p host=172.17.0.2 \
+# -p port=2181 \
+# -p verbose=false \
+# -p recordcount=1000000 \
+# -p operationcount=200000 > ~/current_code_work/ycsb64_c_true_nothing.txt
+
+docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8980" -e "RETRIES=4000" tfr011/mgb-smap:latest >& smap1.txt &
 
 #docker run --rm --net host -e "DB=mgbsmap" \
 #    -e "HOST=${zkAddress}" \
@@ -42,9 +50,9 @@ docker run --rm --net host -e "ZHOST=172.17.0.2" -e "SERVERPORT=8980" -e "RETRIE
 #    -e "TYPE=run" \
 #    -e "WORKLOAD=workloada" \
 #    -e "SMAPPORT=8980" \
-#    -e "THREADS=2" \
-#    -e "RECORDCOUNT=1000" \
-#    -e "OPERATIONCOUNT=10000" \
+#    -e "THREADS=128" \
+#    -e "RECORDCOUNT=1000000" \
+#    -e "OPERATIONCOUNT=200000" \
 #    -e "FAST=true" \
 #    0track/ycsb:latest
 
