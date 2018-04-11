@@ -60,9 +60,7 @@ object SMapServiceServer extends App {
 
     help("help").text("prints this usage text")
   }
-
-  //val e = new ThreadPoolExecutor(64,128,10,TimeUnit.SECONDS, new ArrayBlockingQueue[Runnable](64))
-  var pool1: ExecutorService = Executors.newFixedThreadPool(128)
+  //var pool1: ExecutorService = Executors.newFixedThreadPool(128)
 
   // parser.parse returns Option[C]
   parser.parse(args, ServerConfig()) match {

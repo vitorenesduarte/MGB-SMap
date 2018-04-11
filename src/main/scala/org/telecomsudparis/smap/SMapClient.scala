@@ -21,18 +21,15 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
     val opUuid = OperationUniqueId(operation.operationUuid)
     val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
 
-    /*
-    //FIXME: Proper define calledId in the YCSB side
     //To achieve sequential consistency, reads must wait pending writes.
     if(isRead){
-      //waitPendings()
+      waitPendings()
     } else {
       val writePromise = Promise[Boolean]()
       val callerUuid = CallerId(operation.callerId)
       pendings += callerUuid
       mapServer.pendingMap += (callerUuid ->  writePromise)
     }
-    */
 
     val pro = PromiseResults(Promise[ResultsCollection]())
     val fut = pro.pResult.future

@@ -183,7 +183,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
-            //ringBellPending(cid, pendingMap)
+            ringBellPending(cid, pendingMap)
           }
         }
 
@@ -197,7 +197,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
               mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
             } else {
               mapCopy += (opItemKey -> mutableFieldsMap)
-              //ringBellPending(cid, pendingMap)
+              ringBellPending(cid, pendingMap)
             }
           }
         }
@@ -208,7 +208,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         } else {
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
-            //ringBellPending(cid, pendingMap)
+            ringBellPending(cid, pendingMap)
           }
         }
 
