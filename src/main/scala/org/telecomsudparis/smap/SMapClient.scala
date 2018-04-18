@@ -22,40 +22,39 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.m
   private[this] val internalWait = metrics.timer("internalWait")
 
   def sendCommand(operation: MapCommand): ResultsCollection = {
-    //var st = System.currentTimeMillis()
+    var response = new ResultsCollection()
 
-    val opUuid = OperationUniqueId(operation.operationUuid)
-    val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
-    val callerUuid = CallerId(operation.callerId)
+    try {
+      val opUuid = OperationUniqueId(operation.operationUuid)
+      val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
+      val callerUuid = CallerId(operation.callerId)
 
-    //To achieve sequential consistency, reads must wait pending writes.
-    if(isRead){
-      waitPendings(callerUuid)
-    } else {
-      val writePromise = Promise[Boolean]()
-      mapServer.pendingMap += (callerUuid ->  writePromise)
+      //To achieve sequential consistency, reads must wait pending writes.
+      if (isRead) {
+        waitPendings(callerUuid)
+      } else {
+        val writePromise = Promise[Boolean]()
+        mapServer.pendingMap += (callerUuid -> writePromise)
+      }
+
+      val pro = PromiseResults(Promise[ResultsCollection]())
+      val fut = pro.pResult.future
+
+      mapServer.promiseMap += (opUuid -> pro)
+
+      if (mapServer.localReads && isRead) {
+        mapServer.localReadsQueue.put(operation)
+      } else {
+        val msgMGB = SMapClient.generateMsg(operation)
+        mapServer.queue.put(msgMGB)
+      }
+
+      response = Await.result(fut, Duration.Inf)
+      mapServer.promiseMap -= opUuid
+    } catch{
+      case e: Exception => e.printStackTrace()
     }
 
-    val pro = PromiseResults(Promise[ResultsCollection]())
-    val fut = pro.pResult.future
-
-    mapServer.promiseMap += (opUuid -> pro)
-
-    if(mapServer.localReads && isRead) {
-     mapServer.localReadsQueue.put(operation)
-    } else {
-      val msgMGB = SMapClient.generateMsg(operation)
-      mapServer.queue.put(msgMGB)
-    }
-
-    val response = Await.result(fut, Duration.Inf)
-    mapServer.promiseMap -= opUuid
-
-    /*
-    var end = System.currentTimeMillis()
-    var ft = end - st
-    logger.info(s"Wait: ${ft} Thread: ${Thread.currentThread().getName}")
-    */
     response
   }
 
