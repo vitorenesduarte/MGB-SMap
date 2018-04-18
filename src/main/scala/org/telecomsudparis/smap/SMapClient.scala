@@ -14,9 +14,6 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.m
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
 
   var clientId: String = SMapClient.uuid()
-  //var pendings = scala.collection.mutable.ListBuffer.empty[CallerId]
-  //var pendingWrite: Option[CallerId] = None
-
 
   if(verbose) {
     logger.info(s"SMapClient Id: $clientId")
@@ -59,14 +56,14 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.m
     var ft = end - st
     logger.info(s"Wait: ${ft} Thread: ${Thread.currentThread().getName}")
     */
-
     response
   }
 
-  def waitPendings(pending:CallerId): Unit = {
-    val writeFuture = mapServer.pendingMap(pending).future
-    Await.result(writeFuture, Duration.Inf)
-    mapServer.pendingMap -= pending
+  def waitPendings(pending: CallerId): Unit = {
+    if(mapServer.pendingMap isDefinedAt pending) {
+      val writeFuture = mapServer.pendingMap(pending).future
+      Await.result(writeFuture, Duration.Inf)
+    }
   }
 
 }

@@ -184,10 +184,6 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
-            /*
-            if(verbose)
-              println("MAP: " + mapCopy)
-            */
             ringBellPending(cid, pendingMap)
           }
         }
