@@ -59,9 +59,9 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.m
   }
 
   def waitPendings(pending: CallerId): Unit = {
-    if(mapServer.pendingMap isDefinedAt pending) {
-      val writeFuture = mapServer.pendingMap(pending).future
-      Await.result(writeFuture, Duration.Inf)
+    mapServer.pendingMap.get(pending) match {
+      case promise: Promise[Boolean] => Await.result(promise.future, Duration.Inf)
+      case _  =>
     }
   }
 
