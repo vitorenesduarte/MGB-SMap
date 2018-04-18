@@ -1,14 +1,14 @@
 package org.telecomsudparis.smap
 
-import java.util.concurrent.{ArrayBlockingQueue, ExecutorService, ThreadPoolExecutor, TimeUnit}
 import java.util.logging.Logger
 import java.util.concurrent.{ExecutorService, Executors}
-import scala.util.Properties
-import io.grpc.{Server, ServerBuilder}
-import io.grpc.Channel
 
-class SMapServiceServer(server: Server) {
+import io.grpc.{Server, ServerBuilder}
+
+class SMapServiceServer(server: Server) extends nl.grons.metrics4.scala.DefaultInstrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceServer].getName)
+
+  private[this] val loading = metrics.timer("loading")
 
   def start(): Unit = {
     server.start()

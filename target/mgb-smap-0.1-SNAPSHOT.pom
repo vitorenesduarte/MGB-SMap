@@ -47,6 +47,21 @@
             <version>3.4.10</version>
         </dependency>
         <dependency>
+            <groupId>nl.grons</groupId>
+            <artifactId>metrics4-scala_2.12</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.grons</groupId>
+            <artifactId>metrics4-akka_a24_2.12</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.grons</groupId>
+            <artifactId>metrics4-scala-hdr_2.12</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
             <version>1.8.0</version>

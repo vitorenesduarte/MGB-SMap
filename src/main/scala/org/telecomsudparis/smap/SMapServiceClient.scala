@@ -2,15 +2,19 @@ package org.telecomsudparis.smap
 
 import java.util.concurrent.{CountDownLatch, TimeUnit}
 import java.util.logging.Logger
+
 import org.apache.zookeeper._
 import io.grpc.{ManagedChannelBuilder, Status}
 import org.imdea.vcd.pb.Proto
 import org.imdea.vcd._
 import java.net.InetAddress
+
 import scala.collection.JavaConverters._
 
-class SMapServiceClient(cfg: ClientConfig) {
+class SMapServiceClient(cfg: ClientConfig) extends nl.grons.metrics4.scala.DefaultInstrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
+
+  private[this] val rpcTime = metrics.timer("rpcTime")
 
   val host: String = cfg.host
   val channel =
@@ -30,7 +34,12 @@ class SMapServiceClient(cfg: ClientConfig) {
     */
   def sendCmd(request: MapCommand): Either[Exception, ResultsCollection] = {
     try {
+      //val start = System.currentTimeMillis()
       val result = blockingStub.executeCmd(request)
+      //val end = System.currentTimeMillis()
+      //val ft = end - start
+      //logger.info(s"RPC: ${ft} Thread: ${Thread.currentThread().getName}")
+
       Right(result)
     } catch {
       case e: StatusRuntimeException =>

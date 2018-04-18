@@ -1,33 +1,41 @@
 package org.telecomsudparis.smap
 
+import java.lang.Thread
+
 import com.google.protobuf.{ByteString => ProtobufByteString}
 import scala.concurrent._
 import scala.concurrent.duration._
 import java.util.logging.Logger
+
 /**
   * Producer Class
   */
-class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
+class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.metrics4.scala.DefaultInstrumented  {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
 
   var clientId: String = SMapClient.uuid()
-  var pendings = scala.collection.mutable.ListBuffer.empty[CallerId]
+  //var pendings = scala.collection.mutable.ListBuffer.empty[CallerId]
+  //var pendingWrite: Option[CallerId] = None
+
 
   if(verbose) {
     logger.info(s"SMapClient Id: $clientId")
   }
 
+  private[this] val internalWait = metrics.timer("internalWait")
+
   def sendCommand(operation: MapCommand): ResultsCollection = {
+    //var st = System.currentTimeMillis()
+
     val opUuid = OperationUniqueId(operation.operationUuid)
     val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
+    val callerUuid = CallerId(operation.callerId)
 
     //To achieve sequential consistency, reads must wait pending writes.
     if(isRead){
-      waitPendings()
+      waitPendings(callerUuid)
     } else {
       val writePromise = Promise[Boolean]()
-      val callerUuid = CallerId(operation.callerId)
-      pendings += callerUuid
       mapServer.pendingMap += (callerUuid ->  writePromise)
     }
 
@@ -45,18 +53,20 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) {
 
     val response = Await.result(fut, Duration.Inf)
     mapServer.promiseMap -= opUuid
+
+    /*
+    var end = System.currentTimeMillis()
+    var ft = end - st
+    logger.info(s"Wait: ${ft} Thread: ${Thread.currentThread().getName}")
+    */
+
     response
   }
 
-  def waitPendings(): Unit = {
-    if (pendings.nonEmpty) {
-      for (pending <- pendings) {
-        val writeFuture = mapServer.pendingMap(pending).future
-        Await.result(writeFuture, Duration.Inf)
-        mapServer.pendingMap -= pending
-      }
-      pendings.clear()
-    }
+  def waitPendings(pending:CallerId): Unit = {
+    val writeFuture = mapServer.pendingMap(pending).future
+    Await.result(writeFuture, Duration.Inf)
+    mapServer.pendingMap -= pending
   }
 
 }

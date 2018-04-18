@@ -10,6 +10,10 @@ object Dependencies {
     "com.beust" % "jcommander" % "1.72",
     "org.apache.zookeeper"% "zookeeper" %"3.4.10",
 
+    "nl.grons" %% "metrics4-scala" % "4.0.1",
+    "nl.grons" %% "metrics4-akka_a24" % "4.0.1",
+    "nl.grons" %% "metrics4-scala-hdr" % "4.0.1",
+
     "com.trueaccord.scalapb" %% "scalapb-runtime"      % com.trueaccord.scalapb.compiler.Version.scalapbVersion % "protobuf",
     // for gRPC
     "io.grpc"                %  "grpc-netty"           % "1.8.0",

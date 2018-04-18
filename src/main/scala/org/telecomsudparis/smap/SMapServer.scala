@@ -163,6 +163,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     if(pendingM isDefinedAt cid) {
       pendingM(cid) success true
     }
+    pendingMap -= cid
   }
 
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
@@ -183,6 +184,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
+            /*
+            if(verbose)
+              println("MAP: " + mapCopy)
+            */
             ringBellPending(cid, pendingMap)
           }
         }
