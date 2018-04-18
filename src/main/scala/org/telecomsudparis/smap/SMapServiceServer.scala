@@ -72,18 +72,18 @@ object SMapServiceServer extends App {
       var clientSMap = new SMapClient(verbose = config.verbosity,
         mapServer = serverSMap)
 
-      val server = new SMapServiceServer(
-        ServerBuilder
-          .forPort(config.serverPort)
-          .addService(
-            smapGrpc.bindService(
-              new SMapService(serverSMap, clientSMap),
-              //scala.concurrent.ExecutionContext.fromExecutor(pool1)
-              scala.concurrent.ExecutionContext.global
-            )
+      var serverBuilder = ServerBuilder.forPort(config.serverPort)
+      serverBuilder
+        .addService(
+          smapGrpc.bindService(
+            new SMapService(serverSMap, clientSMap),
+            scala.concurrent.ExecutionContext.global
           )
-          .build()
-      )
+        )
+      serverBuilder.executor(Executors.newCachedThreadPool())
+      serverBuilder.directExecutor()
+
+      val server = new SMapServiceServer(serverBuilder.build())
       server.start()
       serverSMap.serverInit()
       server.blockUntilShutdown()
