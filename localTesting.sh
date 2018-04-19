@@ -42,7 +42,7 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
 # -p recordcount=1000000 \
 # -p operationcount=200000 > ~/current_code_work/ycsb64_c_true_nothing.txt
 
-#docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8980" -e "RETRIES=4000" tfr011/mgb-smap:latest >& smap1.txt &
+#docker run --rm --net host -e "ZHOST=${zkAddress}" -e "SERVERPORT=8980" -e "RETRIES=400" tfr011/mgb-smap:latest
 
 #docker run --rm --net host -e "DB=mgbsmap" \
 #    -e "HOST=${zkAddress}" \
