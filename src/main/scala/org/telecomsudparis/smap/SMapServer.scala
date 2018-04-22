@@ -20,11 +20,16 @@ import java.io.IOException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 
+import org.telecomsudparis.smap.SMapServiceServer.Instrumented
+
 /**
   * Consumer Class
   */
-class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String], var retries: Int) {
+class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String], var retries: Int) extends Instrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
+
+  private[this] val waitingMGB = metrics.timer("waitingMGB")
+  private[this] val processCmdTime = metrics.timer("processCmd")
 
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
@@ -64,8 +69,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   def receiveLoop(): Unit = {
     try {
       while (!stop) {
-        val receivedMsgSet = javaSocket.receive()
-        serverExecuteCmd(receivedMsgSet)
+        val receivedMsgSet = waitingMGB.time(javaSocket.receive())
+        processCmdTime.time(serverExecuteCmd(receivedMsgSet))
       }
     } catch {
       case ex: IOException =>

@@ -73,9 +73,9 @@ object SMapServiceServer extends App {
     val registry = new com.codahale.metrics.MetricRegistry()
     ConsoleReporter.forRegistry(registry)
       .convertRatesTo(TimeUnit.SECONDS)
-      .convertDurationsTo(TimeUnit.MILLISECONDS)
+      .convertDurationsTo(TimeUnit.NANOSECONDS)
       .build()
-      .start(1, TimeUnit.SECONDS) //changed the interval to seconds instead of minutes
+      .start(10, TimeUnit.SECONDS) //changed the interval to seconds instead of minutes
     registry
   }
 
@@ -98,7 +98,7 @@ object SMapServiceServer extends App {
           )
         )
       serverBuilder.executor(Executors.newCachedThreadPool())
-      //serverBuilder.directExecutor()
+      serverBuilder.directExecutor()
 
       val server = new SMapServiceServer(serverBuilder.build())
       server.start()

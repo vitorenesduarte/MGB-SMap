@@ -9,9 +9,12 @@ import org.imdea.vcd.pb.Proto
 import org.imdea.vcd._
 import java.net.InetAddress
 
+import nl.grons.metrics4.scala.DefaultInstrumented
+
 import scala.collection.JavaConverters._
 
-class SMapServiceClient(cfg: ClientConfig) extends nl.grons.metrics4.scala.DefaultInstrumented {
+
+class SMapServiceClient(cfg: ClientConfig) extends DefaultInstrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
 
   private[this] val rpcTime = metrics.timer("rpcTime")
@@ -34,12 +37,8 @@ class SMapServiceClient(cfg: ClientConfig) extends nl.grons.metrics4.scala.Defau
     */
   def sendCmd(request: MapCommand): Either[Exception, ResultsCollection] = {
     try {
-      //val start = System.currentTimeMillis()
-      val result = blockingStub.executeCmd(request)
-      //val end = System.currentTimeMillis()
-      //val ft = end - start
-      //logger.info(s"RPC: ${ft} Thread: ${Thread.currentThread().getName}")
-
+      val result = rpcTime.time(blockingStub.executeCmd(request))
+      //println("RPC: " + rpcTime.mean)
       Right(result)
     } catch {
       case e: StatusRuntimeException =>

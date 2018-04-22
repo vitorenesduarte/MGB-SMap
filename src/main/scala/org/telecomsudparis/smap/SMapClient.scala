@@ -22,9 +22,11 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
     logger.info(s"SMapClient Id: $clientId")
   }
 
-  private[this] val internalWait = metrics.timer("internalWait")
+  private[this] val waitPendingsTime = metrics.timer("waitPendingsTime")
+  private[this] val promiseMapTime = metrics.timer("promiseMapTime")
+  private[this] val totalSendCmd = metrics.timer("totalSendCmd")
 
-  def sendCommand(operation: MapCommand): ResultsCollection = {
+  def sendCommand(operation: MapCommand): ResultsCollection = totalSendCmd.time {
     var response = new ResultsCollection()
 
     try {
@@ -34,9 +36,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
       //To achieve sequential consistency, reads must wait pending writes.
       if (isRead) {
-        internalWait.time {
-          waitPendings(callerUuid)
-        }
+        waitPendings(callerUuid)
       } else {
         val writePromise = Promise[Boolean]()
         mapServer.pendingMap += (callerUuid -> writePromise)
@@ -54,7 +54,9 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         mapServer.queue.put(msgMGB)
       }
 
-      response = Await.result(fut, Duration.Inf)
+      promiseMapTime.time {
+        response = Await.result(fut, Duration.Inf)
+      }
       mapServer.promiseMap -= opUuid
     } catch {
       case e: Exception => e.printStackTrace()
@@ -65,7 +67,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
   def waitPendings(pending: CallerId): Unit = {
     mapServer.pendingMap.get(pending) match {
-      case promise: Promise[Boolean] => Await.result(promise.future, Duration.Inf)
+      case promise: Promise[Boolean] => waitPendingsTime.time(Await.result(promise.future, Duration.Inf))
       case _  =>
     }
   }
