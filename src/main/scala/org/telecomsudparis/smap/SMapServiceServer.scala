@@ -1,8 +1,9 @@
 package org.telecomsudparis.smap
 
 import java.util.logging.Logger
-import java.util.concurrent.{ExecutorService, Executors}
+import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
 
+import com.codahale.metrics.ConsoleReporter
 import io.grpc.{Server, ServerBuilder}
 
 class SMapServiceServer(server: Server) extends nl.grons.metrics4.scala.DefaultInstrumented {
@@ -34,6 +35,8 @@ class SMapServiceServer(server: Server) extends nl.grons.metrics4.scala.DefaultI
 
 }
 
+
+
 object SMapServiceServer extends App {
   val parser = new scopt.OptionParser[ServerConfig]("SMapServiceServer") {
     head("SMapServiceServer", "0.1-SNAPSHOT")
@@ -62,6 +65,20 @@ object SMapServiceServer extends App {
   }
   //var pool1: ExecutorService = Executors.newFixedThreadPool(128)
 
+  trait Instrumented extends nl.grons.metrics4.scala.InstrumentedBuilder {
+    val metricRegistry = SMapServiceServer.metricRegistry
+  }
+
+  val metricRegistry = {
+    val registry = new com.codahale.metrics.MetricRegistry()
+    ConsoleReporter.forRegistry(registry)
+      .convertRatesTo(TimeUnit.SECONDS)
+      .convertDurationsTo(TimeUnit.MILLISECONDS)
+      .build()
+      .start(1, TimeUnit.SECONDS) //changed the interval to seconds instead of minutes
+    registry
+  }
+
   // parser.parse returns Option[C]
   parser.parse(args, ServerConfig()) match {
     case Some(config) =>
@@ -81,7 +98,7 @@ object SMapServiceServer extends App {
           )
         )
       serverBuilder.executor(Executors.newCachedThreadPool())
-      serverBuilder.directExecutor()
+      //serverBuilder.directExecutor()
 
       val server = new SMapServiceServer(serverBuilder.build())
       server.start()

@@ -3,14 +3,17 @@ package org.telecomsudparis.smap
 import java.lang.Thread
 
 import com.google.protobuf.{ByteString => ProtobufByteString}
+
 import scala.concurrent._
 import scala.concurrent.duration._
 import java.util.logging.Logger
 
+import org.telecomsudparis.smap.SMapServiceServer.Instrumented
+
 /**
   * Producer Class
   */
-class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.metrics4.scala.DefaultInstrumented  {
+class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
 
   var clientId: String = SMapClient.uuid()
@@ -31,7 +34,9 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.m
 
       //To achieve sequential consistency, reads must wait pending writes.
       if (isRead) {
-        waitPendings(callerUuid)
+        internalWait.time {
+          waitPendings(callerUuid)
+        }
       } else {
         val writePromise = Promise[Boolean]()
         mapServer.pendingMap += (callerUuid -> writePromise)
@@ -51,7 +56,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends nl.grons.m
 
       response = Await.result(fut, Duration.Inf)
       mapServer.promiseMap -= opUuid
-    } catch{
+    } catch {
       case e: Exception => e.printStackTrace()
     }
 
