@@ -9,6 +9,7 @@ import org.imdea.vcd.pb.Proto
 import org.imdea.vcd._
 import java.net.InetAddress
 
+import com.codahale.metrics.{ConsoleReporter, MetricAttribute}
 import nl.grons.metrics4.scala.DefaultInstrumented
 
 import scala.collection.JavaConverters._
@@ -38,7 +39,6 @@ class SMapServiceClient(cfg: ClientConfig) extends DefaultInstrumented {
   def sendCmd(request: MapCommand): Either[Exception, ResultsCollection] = {
     try {
       val result = rpcTime.time(blockingStub.executeCmd(request))
-      //println("RPC: " + rpcTime.mean)
       Right(result)
     } catch {
       case e: StatusRuntimeException =>
@@ -50,6 +50,7 @@ class SMapServiceClient(cfg: ClientConfig) extends DefaultInstrumented {
 
 object SMapServiceClient {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
+
 
   /**
     * Contacts Zookeeper and outputs closest host

@@ -34,7 +34,10 @@ scalacOptions in Global ++= Seq(
 */
 
 //debug
-//javaOptions in run ++= Seq("-Xms512M", "-Xmx512M", "-Xss1M", "-XX:+CMSClassUnloadingEnabled", "-XX:MaxPermSize=256M", "-XX:+PrintGCDetails", "-XX:+PrintGCTimeStamps", "-XX:-HeapDumpOnOutOfMemoryError", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=3000")
+//javaOptions in run ++= Seq("-Xms512M", "-Xmx512M", "-Xss1M",
+// "-XX:+CMSClassUnloadingEnabled", "-XX:MaxPermSize=256M", "-XX:+PrintGCDetails",
+// "-XX:+PrintGCTimeStamps", "-XX:-HeapDumpOnOutOfMemoryError", "-XX:+UseG1GC",
+// "-XX:MaxGCPauseMillis=3000")
 
 logLevel := Level.Error
 

@@ -34,10 +34,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   private[this] val processOneRead = metrics.timer("processOneRead")
   private[this] val processUpdateCommit = metrics.timer("processUpdateCommit")
   private[this] val processUpdateDelivered = metrics.timer("processUpdateDelivered")
-  private[this] val processUpdateConversion = metrics.timer("processUpdateConversion")
 
-  private[this] val unmarshellingSet = metrics.timer("unmarshelling")
-  private[this] val creationMGBmsgSet = metrics.timer("creationMGBmsgSet")
 
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
@@ -99,9 +96,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       while (!stop) {
         val m: Message = queue.take()
         msgList.add(m)
-        queue.drainTo(msgList)
 
-        val mgbMsgSet = creationMGBmsgSet.time(MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build())
+        queue.drainTo(msgList)
+        val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
         //TODO: Catch exception
         javaSocket.send(mgbMsgSet)
 
@@ -161,7 +158,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     */
   def serverExecuteCmd(mset: MessageSet): Unit = {
     val msgSetAsList = mset.getMessagesList.asScala
-    val unmarshalledSet = unmarshellingSet.time { msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg)) }
+    val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
 
     try {
       lock.writeLock().lock()
@@ -172,10 +169,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
   }
 
-  def ringBell(uid: OperationUniqueId, pm: CTrieMap[OperationUniqueId, PromiseResults], pr: ResultsCollection): Unit = {
-    if(pm isDefinedAt uid) {
-      pm(uid).pResult success pr
-    }
+
+  def ringBell(uid: OperationUniqueId, pr: ResultsCollection): Unit = {
+    promiseMap(uid).pResult success pr
   }
 
   def ringBellPending(cid: CallerId): Unit = {
@@ -198,7 +194,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     deliveredOperation.operationType match {
       case INSERT =>
         if(msgSetStatus == Status.COMMITTED){
-          ringBell(uuid, promiseMap, ResultsCollection())
+          ringBell(uuid, ResultsCollection())
         } else {
           //opItem is immutable.Map, doing a conversion.
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
@@ -211,12 +207,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       case UPDATE =>
         if(msgSetStatus == Status.COMMITTED){
           processUpdateCommit.time {
-            ringBell(uuid, promiseMap, ResultsCollection())
+            ringBell(uuid, ResultsCollection())
           }
         } else {
-          val mutableFieldsMap: MMap[String, String] = processUpdateConversion.time {
-            MMap() ++ opItem.fields
-          }
+          val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           processUpdateDelivered.time {
             if (msgSetStatus == Status.DELIVERED) {
               if (mapCopy isDefinedAt opItemKey) {
@@ -231,7 +225,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
       case DELETE =>
         if(msgSetStatus == Status.COMMITTED){
-          ringBell(uuid, promiseMap, ResultsCollection())
+          ringBell(uuid, ResultsCollection())
         } else {
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
@@ -260,7 +254,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
                 ResultsCollection(Seq(Item(key = opItemKey)))
               }
             }
-            ringBell(uuid, promiseMap, result)
+            ringBell(uuid, result)
           }
         }
 
@@ -284,7 +278,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
             }
           }
           //Returning empty sequence of items in case of nondefined startingKey
-          ringBell(uuid, promiseMap, ResultsCollection(seqResults))
+          ringBell(uuid, ResultsCollection(seqResults))
         }
 
       case _ => println("Unknown Operation")

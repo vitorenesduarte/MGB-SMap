@@ -105,7 +105,7 @@ object SMapServiceServer extends App {
         .addService(
           smapGrpc.bindService(
             new SMapService(serverSMap, clientSMap),
-            scala.concurrent.ExecutionContext.global
+            scala.concurrent.ExecutionContext.fromExecutor(Executors.newFixedThreadPool(256))
           )
         )
       serverBuilder.executor(Executors.newFixedThreadPool(256))

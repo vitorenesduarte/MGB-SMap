@@ -25,9 +25,8 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
   private[this] val waitPendingsTime = metrics.timer("waitPendingsTime")
   private[this] val promiseMapTimeRead = metrics.timer("promiseMapRead")
   private[this] val promiseMapTimeWrite = metrics.timer("promiseMapWrite")
-  private[this] val totalSendCmd = metrics.timer("totalSendCmd")
 
-  def sendCommand(operation: MapCommand): ResultsCollection = totalSendCmd.time {
+  def sendCommand(operation: MapCommand): ResultsCollection =  {
     var response = new ResultsCollection()
 
     try {
