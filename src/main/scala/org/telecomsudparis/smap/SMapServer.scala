@@ -35,10 +35,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   private[this] val processUpdateCommit = metrics.timer("processUpdateCommit")
   private[this] val processUpdateDelivered = metrics.timer("processUpdateDelivered")
 
-
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
   var javaSocket = Socket.create(javaClientConfig, retries)
+  // var javaSocket = DummySocket.create(javaClientConfig)
   //val dummySocket = DummySocket.create(javaClientConfig)
 
   var mapCopy = MTreeMap[String, MMap[String, String]]()
@@ -171,7 +171,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
 
   def ringBell(uid: OperationUniqueId, pr: ResultsCollection): Unit = {
-    promiseMap(uid).pResult success pr
+    if(promiseMap isDefinedAt uid) {
+      promiseMap(uid).pResult success pr
+    }
   }
 
   def ringBellPending(cid: CallerId): Unit = {
