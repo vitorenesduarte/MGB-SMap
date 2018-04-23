@@ -23,7 +23,8 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
   }
 
   private[this] val waitPendingsTime = metrics.timer("waitPendingsTime")
-  private[this] val promiseMapTime = metrics.timer("promiseMapTime")
+  private[this] val promiseMapTimeRead = metrics.timer("promiseMapRead")
+  private[this] val promiseMapTimeWrite = metrics.timer("promiseMapWrite")
   private[this] val totalSendCmd = metrics.timer("totalSendCmd")
 
   def sendCommand(operation: MapCommand): ResultsCollection = totalSendCmd.time {
@@ -54,10 +55,13 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         mapServer.queue.put(msgMGB)
       }
 
-      promiseMapTime.time {
-        response = Await.result(fut, Duration.Inf)
+      if(isRead) {
+        response = promiseMapTimeRead.time(Await.result(fut, Duration.Inf))
+      } else {
+        response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
       }
       mapServer.promiseMap -= opUuid
+
     } catch {
       case e: Exception => e.printStackTrace()
     }

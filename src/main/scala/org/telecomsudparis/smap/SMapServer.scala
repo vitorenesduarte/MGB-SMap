@@ -28,8 +28,16 @@ import org.telecomsudparis.smap.SMapServiceServer.Instrumented
 class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String], var retries: Int) extends Instrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
 
-  private[this] val waitingMGB = metrics.timer("waitingMGB")
-  private[this] val processCmdTime = metrics.timer("processCmd")
+  private[this] val processWrites = metrics.timer("processWrites")
+  private[this] val processReads = metrics.timer("processReads")
+
+  private[this] val processOneRead = metrics.timer("processOneRead")
+  private[this] val processUpdateCommit = metrics.timer("processUpdateCommit")
+  private[this] val processUpdateDelivered = metrics.timer("processUpdateDelivered")
+  private[this] val processUpdateConversion = metrics.timer("processUpdateConversion")
+
+  private[this] val unmarshellingSet = metrics.timer("unmarshelling")
+  private[this] val creationMGBmsgSet = metrics.timer("creationMGBmsgSet")
 
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
@@ -69,8 +77,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   def receiveLoop(): Unit = {
     try {
       while (!stop) {
-        val receivedMsgSet = waitingMGB.time(javaSocket.receive())
-        processCmdTime.time(serverExecuteCmd(receivedMsgSet))
+        val receivedMsgSet = javaSocket.receive()
+        processWrites.time(serverExecuteCmd(receivedMsgSet))
       }
     } catch {
       case ex: IOException =>
@@ -89,7 +97,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         msgList.add(m)
         queue.drainTo(msgList)
 
-        val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
+        val mgbMsgSet = creationMGBmsgSet.time(MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build())
         //TODO: Catch exception
         javaSocket.send(mgbMsgSet)
 
@@ -115,8 +123,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
         try {
           lock.readLock().lock()
-          //Since we're doing local reads I assume DELIVERED msgStatus
-          readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
+          processReads.time {
+            //Since we're doing local reads I assume DELIVERED msgStatus
+            readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
+          }
         } finally {
           lock.readLock().unlock()
         }
@@ -147,7 +157,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     */
   def serverExecuteCmd(mset: MessageSet): Unit = {
     val msgSetAsList = mset.getMessagesList.asScala
-    val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
+    val unmarshalledSet = unmarshellingSet.time { msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg)) }
 
     try {
       lock.writeLock().lock()
@@ -195,14 +205,18 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
       case UPDATE =>
         if(msgSetStatus == Status.COMMITTED){
-          ringBell(uuid, promiseMap, ResultsCollection())
+          processUpdateCommit.time {
+            ringBell(uuid, promiseMap, ResultsCollection())
+          }
         } else {
-          val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
-          if(msgSetStatus == Status.DELIVERED){
-            if(mapCopy isDefinedAt opItemKey){
-              mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
-            } else {
-              mapCopy += (opItemKey -> mutableFieldsMap)
+          val mutableFieldsMap: MMap[String, String] = processUpdateConversion.time { MMap() ++ opItem.fields}
+          processUpdateDelivered.time {
+            if (msgSetStatus == Status.DELIVERED) {
+              if (mapCopy isDefinedAt opItemKey) {
+                mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
+              } else {
+                mapCopy += (opItemKey -> mutableFieldsMap)
+              }
               ringBellPending(cid, pendingMap)
             }
           }
@@ -220,25 +234,27 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
       case GET =>
         //in case of (localReads == false) apply GET only to the caller
-        if(msgSetStatus == Status.DELIVERED){
-          val result: ResultsCollection = {
-            if(mapCopy isDefinedAt opItemKey) {
-              val tempResult: MMap[String, String] = MMap()
-              //From YCSB, if fields set is empty must read all fields
-              val keySet = if(opItem.fields.isEmpty) mapCopy(opItemKey).keys else opItem.fields.keys
-              for (fieldKey <- keySet) {
-                if(mapCopy(opItemKey) isDefinedAt fieldKey)
-                  tempResult += (fieldKey -> mapCopy(opItemKey)(fieldKey))
-                //else should do tempResult += (fieldKey -> defaultEmptyValue)
+        processOneRead.time {
+          if (msgSetStatus == Status.DELIVERED) {
+            val result: ResultsCollection = {
+              if (mapCopy isDefinedAt opItemKey) {
+                val tempResult: MMap[String, String] = MMap()
+                //From YCSB, if fields set is empty must read all fields
+                val keySet = if (opItem.fields.isEmpty) mapCopy(opItemKey).keys else opItem.fields.keys
+                for (fieldKey <- keySet) {
+                  if (mapCopy(opItemKey) isDefinedAt fieldKey)
+                    tempResult += (fieldKey -> mapCopy(opItemKey)(fieldKey))
+                  //else should do tempResult += (fieldKey -> defaultEmptyValue)
+                }
+                //Item.fields is an immutableMap, making a conversion then.
+                val getItem = Item(key = opItemKey, fields = tempResult.toMap)
+                ResultsCollection(Seq(getItem))
+              } else {
+                ResultsCollection(Seq(Item(key = opItemKey)))
               }
-              //Item.fields is an immutableMap, making a conversion then.
-              val getItem = Item(key = opItemKey, fields = tempResult.toMap)
-              ResultsCollection(Seq(getItem))
-            } else {
-              ResultsCollection(Seq(Item(key = opItemKey)))
             }
+            ringBell(uuid, promiseMap, result)
           }
-          ringBell(uuid, promiseMap, result)
         }
 
       case SCAN =>
