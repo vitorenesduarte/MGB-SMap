@@ -1,5 +1,6 @@
 package org.telecomsudparis.smap
 
+import java.util.concurrent.{Executors, TimeUnit}
 import java.util.logging.Logger
 import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
 
@@ -37,8 +38,6 @@ class SMapServiceServer(server: Server) extends nl.grons.metrics4.scala.DefaultI
 
 }
 
-
-
 object SMapServiceServer extends App {
   val parser = new scopt.OptionParser[ServerConfig]("SMapServiceServer") {
     head("SMapServiceServer", "0.1-SNAPSHOT")
@@ -71,11 +70,21 @@ object SMapServiceServer extends App {
     val metricRegistry = SMapServiceServer.metricRegistry
   }
 
+  var reporterSettings = scala.collection.JavaConverters.setAsJavaSet(
+    Set(MetricAttribute.MAX, MetricAttribute.STDDEV,
+      MetricAttribute.M1_RATE, MetricAttribute.M5_RATE,
+      MetricAttribute.M15_RATE, MetricAttribute.MIN,
+      MetricAttribute.P99, MetricAttribute.P50,
+      MetricAttribute.P75, MetricAttribute.P95,
+      MetricAttribute.P98, MetricAttribute.P999)
+  )
+
   val metricRegistry = {
     val registry = new com.codahale.metrics.MetricRegistry()
     ConsoleReporter.forRegistry(registry)
       .convertRatesTo(TimeUnit.SECONDS)
-      .convertDurationsTo(TimeUnit.NANOSECONDS)
+      .convertDurationsTo(TimeUnit.MICROSECONDS)
+      .disabledMetricAttributes(reporterSettings)
       .build()
       .start(10, TimeUnit.SECONDS) //changed the interval to seconds instead of minutes
     registry
