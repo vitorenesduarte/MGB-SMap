@@ -4,7 +4,7 @@ import java.util.concurrent.{Executors, TimeUnit}
 import java.util.logging.Logger
 import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
 
-import com.codahale.metrics.ConsoleReporter
+import com.codahale.metrics.{ConsoleReporter, MetricAttribute}
 import io.grpc.netty.NettyServerBuilder
 import io.grpc.{Server, ServerBuilder}
 import io.netty.channel.socket.nio.NioServerSocketChannel
