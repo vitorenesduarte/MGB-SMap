@@ -40,6 +40,9 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         waitPendings(callerUuid)
       } else {
         val writePromise = Promise[Boolean]()
+        if(verbose) {
+          logger.info("add pending map" + callerUuid)
+        }
         mapServer.pendingMap += (callerUuid -> writePromise)
       }
 
@@ -71,7 +74,9 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
   def waitPendings(pending: CallerId): Unit = {
     mapServer.pendingMap.get(pending) match {
-      case promise: Promise[Boolean] => waitPendingsTime.time(Await.result(promise.future, Duration.Inf))
+      case Some(promise: Promise[Boolean]) =>
+        if(verbose) logger.info("wait pending map" + pending)
+        waitPendingsTime.time(Await.result(promise.future, Duration.Inf))
       case _  =>
     }
   }
