@@ -166,7 +166,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     if(pendingMap isDefinedAt cid) {
       pendingMap(cid) success true
       pendingMap -= cid
-      if (verbose) logger.info("ring pending map" + pendingMap)
+      if (verbose) logger.fine("ring pending map" + pendingMap)
     }
   }
 
