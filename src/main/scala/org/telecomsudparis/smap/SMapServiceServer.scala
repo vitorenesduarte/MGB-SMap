@@ -4,7 +4,9 @@ import java.util.logging.Logger
 import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
 
 import com.codahale.metrics.ConsoleReporter
+import io.grpc.netty.NettyServerBuilder
 import io.grpc.{Server, ServerBuilder}
+import io.netty.channel.socket.nio.NioServerSocketChannel
 
 class SMapServiceServer(server: Server) extends nl.grons.metrics4.scala.DefaultInstrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceServer].getName)
@@ -89,7 +91,7 @@ object SMapServiceServer extends App {
       var clientSMap = new SMapClient(verbose = config.verbosity,
         mapServer = serverSMap)
 
-      var serverBuilder = ServerBuilder.forPort(config.serverPort)
+      var serverBuilder = NettyServerBuilder.forPort(config.serverPort)
       serverBuilder
         .addService(
           smapGrpc.bindService(
@@ -97,8 +99,7 @@ object SMapServiceServer extends App {
             scala.concurrent.ExecutionContext.global
           )
         )
-      serverBuilder.executor(Executors.newCachedThreadPool())
-      serverBuilder.directExecutor()
+      serverBuilder.executor(Executors.newFixedThreadPool(256))
 
       val server = new SMapServiceServer(serverBuilder.build())
       server.start()

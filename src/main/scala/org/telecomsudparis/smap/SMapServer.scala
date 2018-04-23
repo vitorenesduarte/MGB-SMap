@@ -53,6 +53,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   var localReading: Thread = new Thread(()=> doLocalReading)
   var pool: ExecutorService = Executors.newFixedThreadPool(3)
 
+  // FIXME read concurrently ?
+  // FIXME ring pending is wrong (should onlye only if this is the same callID)
+  // FIXME ResultsCollection(Seq(Item())) = 16us ! return everything
+
   /**
     * Lock definition to properly access mapCopy when doing local reads.
     */
@@ -159,7 +163,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   }
 
   def ringBell(uid: OperationUniqueId, pm: CTrieMap[OperationUniqueId, PromiseResults], pr: ResultsCollection): Unit = {
-    pm(uid).pResult success pr
+    if(pm isDefinedAt uid) {
+      pm(uid).pResult success pr
+    }
   }
 
   def ringBellPending(cid: CallerId): Unit = {
