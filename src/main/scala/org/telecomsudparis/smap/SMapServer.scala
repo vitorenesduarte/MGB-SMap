@@ -159,16 +159,15 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   }
 
   def ringBell(uid: OperationUniqueId, pm: CTrieMap[OperationUniqueId, PromiseResults], pr: ResultsCollection): Unit = {
-    if(pm isDefinedAt uid) {
-        pm(uid).pResult success pr
-    }
+    pm(uid).pResult success pr
   }
 
-  def ringBellPending(cid: CallerId, pendingM: CTrieMap[CallerId, Promise[Boolean]]): Unit = {
-    if(pendingM isDefinedAt cid) {
-      pendingM(cid) success true
+  def ringBellPending(cid: CallerId): Unit = {
+    if(pendingMap isDefinedAt cid) {
+      pendingMap(cid) success true
+      pendingMap -= cid
+      if (verbose) logger.info("ring pending map" + pendingMap)
     }
-    pendingMap -= cid
   }
 
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
@@ -189,7 +188,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
-            ringBellPending(cid, pendingMap)
+            ringBellPending(cid)
           }
         }
 
@@ -203,8 +202,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
               mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
             } else {
               mapCopy += (opItemKey -> mutableFieldsMap)
-              ringBellPending(cid, pendingMap)
             }
+            ringBellPending(cid)
           }
         }
 
@@ -214,7 +213,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         } else {
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
-            ringBellPending(cid, pendingMap)
+            ringBellPending(cid)
           }
         }
 
