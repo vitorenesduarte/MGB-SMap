@@ -39,34 +39,20 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
     -p 6002:6002 ${image} >& mgb3.txt &
 
 sleep 6
-docker run --rm --net host -e "ZHOST=${localHost}" -e "ZPORT=5000" -e "SERVERPORT=8980" -e "RETRIES=400" -e "STATIC=true" tfr011/mgb-smap:latest &> smap1.txt &
-docker run --rm --net host -e "ZHOST=${localHost}" -e "ZPORT=5001" -e "SERVERPORT=8990" -e "RETRIES=400" -e "STATIC=true" tfr011/mgb-smap:latest &> smap2.txt &
+docker run --rm --net host -e "ZHOST=${localHost}"\
+    -e "ZPORT=5000" \
+    -e "SERVERPORT=8980" \
+    -e "RETRIES=400" \
+    -e "STATIC=true" \
+    tfr011/mgb-smap:latest &> smap1.txt &
 
-#docker run --rm --net host -e "DB=mgbsmap" \
-#    -e "HOST=${localHost}" \
-#    -e "PORT=2181" \
-#    -e "TYPE=run" \
-#    -e "WORKLOAD=workloada" \
-#    -e "SMAPPORT=8980" \
-#    -e "STATIC=true" \
-#    -e "THREADS=16" \
-#    -e "RECORDCOUNT=10000" \
-#    -e "OPERATIONCOUNT=10000" \
-#    -e "FAST=true" \
-#    0track/ycsb:latest &> ycsb1.txt
-#
-#docker run --rm --net host -e "DB=mgbsmap" \
-#    -e "HOST=${localHost}" \
-#    -e "PORT=2181" \
-#    -e "TYPE=run" \
-#    -e "WORKLOAD=workloada" \
-#    -e "SMAPPORT=8990" \
-#    -e "STATIC=true" \
-#    -e "THREADS=16" \
-#    -e "RECORDCOUNT=10000" \
-#    -e "OPERATIONCOUNT=10000" \
-#    -e "FAST=true" \
-#    0track/ycsb:latest &> ycsb1.txt
+docker run --rm --net host -e "ZHOST=${localHost}"\
+    -e "ZPORT=5001" \
+    -e "SERVERPORT=8990" \
+    -e "RETRIES=400" \
+    -e "STATIC=true" \
+    tfr011/mgb-smap:latest &> smap2.txt &
+
 
 cleanup(){
   docker stop $(docker ps -aq)
