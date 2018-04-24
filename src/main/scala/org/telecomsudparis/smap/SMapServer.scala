@@ -79,9 +79,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     try {
       while (!stop) {
         val receivedMsgSet = javaSocket.receive()
-        logger.info("IN")
         processWrites.time(serverExecuteCmd(receivedMsgSet))
-        logger.info("OUT")
       }
     } catch {
       case ex: InterruptedException =>
@@ -163,6 +161,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
     lock.writeLock().lock()
     unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
+    unmarshalledSet foreach (e => applyOperation(e)(MessageSet.Status.DELIVERED))
     lock.writeLock().unlock()
 
   }
