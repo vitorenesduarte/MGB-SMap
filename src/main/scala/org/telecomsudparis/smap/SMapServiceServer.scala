@@ -53,6 +53,9 @@ object SMapServiceServer extends App {
     opt[Boolean]("verbosity").abbr("vb").action( (x, c) =>
       c.copy(verbosity = x) ).text("Verbosity is an boolean property. Default: true")
 
+    opt[Boolean]("static").abbr("st").action( (x, c) =>
+      c.copy(static = x) ).text("Static is an boolean property. Default: true")
+
     opt[String]("zookeeperHost").abbr("zkh").action( (x, c) =>
       c.copy(zkHost = x) ).text("Default is the string: 127.0.0.1")
 
@@ -95,7 +98,7 @@ object SMapServiceServer extends App {
     case Some(config) =>
       var serverSMap = new SMapServer(localReads = config.lReads,
         verbose = config.verbosity,
-        Array("-zk=" + config.zkHost + ":" + config.zkPort), retries = config.retries)
+        Array("-zk=" + config.zkHost + ":" + config.zkPort), retries = config.retries, staticConnection = config.static)
 
       var clientSMap = new SMapClient(verbose = config.verbosity,
         mapServer = serverSMap)

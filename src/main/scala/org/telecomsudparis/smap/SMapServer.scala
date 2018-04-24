@@ -25,7 +25,7 @@ import org.telecomsudparis.smap.SMapServiceServer.Instrumented
 /**
   * Consumer Class
   */
-class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String], var retries: Int) extends Instrumented {
+class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Array[String], var retries: Int, var staticConnection: Boolean) extends Instrumented {
   val logger: Logger = Logger.getLogger(classOf[SMapServiceClient].getName)
 
   private[this] val processWrites = metrics.timer("processWrites")
@@ -37,9 +37,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
-  var javaSocket = Socket.create(javaClientConfig, retries)
-  // var javaSocket = DummySocket.create(javaClientConfig)
-  //val dummySocket = DummySocket.create(javaClientConfig)
+
+  var javaSocket = if(staticConnection) Socket.createStatic(javaClientConfig, retries) else Socket.create(javaClientConfig, retries)
+  //var javaSocket = DummySocket.create(javaClientConfig)
 
   var mapCopy = MTreeMap[String, MMap[String, String]]()
   var pendingMap = CTrieMap[CallerId, Promise[Boolean]]()
