@@ -5,7 +5,7 @@ dockIp() {
 }
 
 localHost=127.0.0.1
-image="vitorenesduarte/vcd:latest"
+image="vitorenesduarte/vcd:debug"
 docker pull ${image}
 docker run --rm -d -p 2181:2181 zookeeper &
 sleep 3
@@ -43,12 +43,14 @@ docker run --rm --net host -e "ZHOST=${localHost}"\
     -e "ZPORT=5000" \
     -e "SERVERPORT=8980" \
     -e "RETRIES=400" \
+    -e "VERBOSE=false" \
     -e "STATIC=true" \
     tfr011/mgb-smap:latest &> smap1.txt &
 
 docker run --rm --net host -e "ZHOST=${localHost}"\
     -e "ZPORT=5001" \
-    -e "SERVERPORT=8990" \
+    -e "SERVERPORT=8981" \
+    -e "VERBOSE=false" \
     -e "RETRIES=400" \
     -e "STATIC=true" \
     tfr011/mgb-smap:latest &> smap2.txt &
