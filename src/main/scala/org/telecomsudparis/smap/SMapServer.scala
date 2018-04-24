@@ -190,7 +190,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
 
-    logger.info(deliveredOperation.operationUuid + " -> " + msgSetStatus)
+    if (verbose) {
+      logger.info(deliveredOperation.operationUuid + " -> " + msgSetStatus)
+    }
 
     deliveredOperation.operationType match {
       case INSERT =>
