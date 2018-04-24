@@ -79,13 +79,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     try {
       while (!stop) {
         val receivedMsgSet = javaSocket.receive()
-        if(verbose) {
-          logger.info("IN")
-        }
+        logger.info("IN")
         processWrites.time(serverExecuteCmd(receivedMsgSet))
-        if(verbose) {
-          logger.info("OUT")
-        }
+        logger.info("OUT")
       }
     } catch {
       case ex: InterruptedException =>
@@ -195,9 +191,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
 
-    if(verbose) {
-      logger.info(deliveredOperation.operationUuid + " -> " + msgSetStatus)
-    }
+    logger.info(deliveredOperation.operationUuid + " -> " + msgSetStatus)
 
     deliveredOperation.operationType match {
       case INSERT =>
