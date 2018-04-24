@@ -30,7 +30,7 @@ docker run --rm --net host -e "DB=mgbsmap" \
     0track/ycsb:latest &> ycsb2.txt &
 
 cleanup(){
-  docker stop $(docker ps -aq)
+  docker stop $(docker ps | grep ycsb | awk '{print $1}')
 }
 
 wait
