@@ -82,8 +82,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         processWrites.time(serverExecuteCmd(receivedMsgSet))
       }
     } catch {
-      case ex: IOException =>
+      case ex: InterruptedException =>
         logger.warning("SMapServer Receive Loop Interrupted: " ++ serverId)
+      case ex: Exception =>
+        throw new RuntimeException()
     }
   }
 
@@ -96,18 +98,16 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       while (!stop) {
         val m: Message = queue.take()
         msgList.add(m)
-
         queue.drainTo(msgList)
         val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
-        //TODO: Catch exception
         javaSocket.send(mgbMsgSet)
-
         msgList.clear()
-
       }
     } catch {
       case ex: InterruptedException =>
         logger.warning("SMapServer Consume Loop Interrupted at: " ++ serverId)
+      case ex: Exception =>
+        throw new RuntimeException()
     }
   }
 
@@ -122,20 +122,19 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         readList.add(readOperation)
         localReadsQueue.drainTo(readList)
 
-        try {
-          lock.readLock().lock()
-          processReads.time {
-            //Since we're doing local reads I assume DELIVERED msgStatus
-            readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
-          }
-        } finally {
-          lock.readLock().unlock()
+        lock.readLock().lock()
+        processReads.time {
+          //Since we're doing local reads I assume DELIVERED msgStatus
+          readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
         }
+        lock.readLock().unlock()
         readList.clear()
       }
     } catch {
       case ex: InterruptedException =>
         logger.warning("SMapServer LocalRead Consume Loop Interrupted at: " ++ serverId)
+      case ex: Exception =>
+        throw new RuntimeException()
     }
   }
 
@@ -160,12 +159,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val msgSetAsList = mset.getMessagesList.asScala
     val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
 
-    try {
-      lock.writeLock().lock()
-      unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
-    } finally {
-      lock.writeLock().unlock()
-    }
+    lock.writeLock().lock()
+    unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
+    lock.writeLock().unlock()
 
   }
 
@@ -193,6 +189,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
 
+    if (verbose) {
+      logger.info(deliveredOperation.operationUuid + " -> " + msgSetStatus)
+    }
+
     deliveredOperation.operationType match {
       case INSERT =>
         if(msgSetStatus == Status.COMMITTED){
@@ -203,6 +203,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
             ringBellPending(cid)
+          }else{
+            throw new RuntimeException()
           }
         }
 
@@ -221,6 +223,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
                 mapCopy += (opItemKey -> mutableFieldsMap)
               }
               ringBellPending(cid)
+            }else{
+              throw new RuntimeException()
             }
           }
         }
@@ -232,6 +236,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
             ringBellPending(cid)
+          }else{
+            throw new RuntimeException()
           }
         }
 

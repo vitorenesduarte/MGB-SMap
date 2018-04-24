@@ -5,7 +5,8 @@ dockIp() {
 }
 
 localHost=127.0.0.1
-docker pull vitorenesduarte/vcd:latest
+image="vitorenesduarte/vcd:latest"
+docker pull ${image}
 docker run --rm -d -p 2181:2181 zookeeper &
 sleep 3
 
@@ -19,7 +20,7 @@ docker run --rm --net host -e "ZK=${zkAddress}"\
     -e "NODE_NUMBER=3" \
     -e "HPORT=5000" \
     -e "CPORT=6000" \
-    -p 6000:6000 vitorenesduarte/vcd >& mgb1.txt &
+    -p 6000:6000 ${image} >& mgb1.txt &
 
 
 docker run --rm --net host -e "ZK=${zkAddress}" \
@@ -27,7 +28,7 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
     -e "NODE_NUMBER=3" \
     -e "HPORT=5001" \
     -e "CPORT=6001" \
-    -p 6001:6001 vitorenesduarte/vcd >& mgb2.txt &
+    -p 6001:6001 ${image} >& mgb2.txt &
 
 
 docker run --rm --net host -e "ZK=${zkAddress}" \
@@ -35,7 +36,7 @@ docker run --rm --net host -e "ZK=${zkAddress}" \
     -e "NODE_NUMBER=3" \
     -e "HPORT=5002" \
     -e "CPORT=6002" \
-    -p 6002:6002 vitorenesduarte/vcd >& mgb3.txt &
+    -p 6002:6002 ${image} >& mgb3.txt &
 
 sleep 3
 docker run --rm --net host -e "ZHOST=${localHost}" -e "ZPORT=5000" -e "SERVERPORT=8980" -e "RETRIES=400" -e "STATIC=true" tfr011/mgb-smap:latest &> smap1.txt &
