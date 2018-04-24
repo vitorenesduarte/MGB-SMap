@@ -79,7 +79,13 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     try {
       while (!stop) {
         val receivedMsgSet = javaSocket.receive()
+        if(verbose) {
+          logger.info("IN")
+        }
         processWrites.time(serverExecuteCmd(receivedMsgSet))
+        if(verbose) {
+          logger.info("OUT")
+        }
       }
     } catch {
       case ex: InterruptedException =>
@@ -122,12 +128,12 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         readList.add(readOperation)
         localReadsQueue.drainTo(readList)
 
-        // lock.readLock().lock()
+        lock.readLock().lock()
         processReads.time {
           //Since we're doing local reads I assume DELIVERED msgStatus
           readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
         }
-        // lock.readLock().unlock()
+        lock.readLock().unlock()
         readList.clear()
       }
     } catch {
@@ -159,9 +165,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val msgSetAsList = mset.getMessagesList.asScala
     val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
 
-    // lock.writeLock().lock()
+    lock.writeLock().lock()
     unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
-    // lock.writeLock().unlock()
+    lock.writeLock().unlock()
 
   }
 
@@ -189,7 +195,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
 
-    logger.info(deliveredOperation+" -> "+msgSetStatus)
+    if(verbose) {
+      logger.info(deliveredOperation.operationUuid + " -> " + msgSetStatus)
+    }
 
     deliveredOperation.operationType match {
       case INSERT =>
@@ -201,6 +209,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
             ringBellPending(cid)
+          }else{
+            throw new RuntimeException()
           }
         }
 
@@ -219,6 +229,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
                 mapCopy += (opItemKey -> mutableFieldsMap)
               }
               ringBellPending(cid)
+            }else{
+              throw new RuntimeException()
             }
           }
         }
@@ -230,6 +242,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
             ringBellPending(cid)
+          }else{
+            throw new RuntimeException()
           }
         }
 
