@@ -161,7 +161,6 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
     lock.writeLock().lock()
     unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
-    unmarshalledSet foreach (e => applyOperation(e)(MessageSet.Status.DELIVERED))
     lock.writeLock().unlock()
 
   }
