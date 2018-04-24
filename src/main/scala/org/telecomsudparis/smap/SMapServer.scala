@@ -82,8 +82,11 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         processWrites.time(serverExecuteCmd(receivedMsgSet))
       }
     } catch {
-      case ex: IOException =>
+      case ex: InterruptedException =>
         logger.warning("SMapServer Receive Loop Interrupted: " ++ serverId)
+      case ex: Exception =>
+        ex.printStackTrace()
+        throw new RuntimeException()
     }
   }
 
@@ -108,6 +111,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     } catch {
       case ex: InterruptedException =>
         logger.warning("SMapServer Consume Loop Interrupted at: " ++ serverId)
+      case ex: Exception =>
+        ex.printStackTrace()
+        throw new RuntimeException()
     }
   }
 
@@ -122,20 +128,20 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         readList.add(readOperation)
         localReadsQueue.drainTo(readList)
 
-        try {
-          lock.readLock().lock()
-          processReads.time {
-            //Since we're doing local reads I assume DELIVERED msgStatus
-            readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
-          }
-        } finally {
-          lock.readLock().unlock()
+        lock.readLock().lock()
+        processReads.time {
+          //Since we're doing local reads I assume DELIVERED msgStatus
+          readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
         }
+        lock.readLock().unlock()
         readList.clear()
       }
     } catch {
       case ex: InterruptedException =>
         logger.warning("SMapServer LocalRead Consume Loop Interrupted at: " ++ serverId)
+      case ex: Exception =>
+        ex.printStackTrace()
+        throw new RuntimeException()
     }
   }
 
@@ -160,12 +166,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val msgSetAsList = mset.getMessagesList.asScala
     val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
 
-    try {
-      lock.writeLock().lock()
-      unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
-    } finally {
-      lock.writeLock().unlock()
-    }
+    lock.writeLock().lock()
+    unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
+    lock.writeLock().unlock()
 
   }
 

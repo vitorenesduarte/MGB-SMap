@@ -4,7 +4,8 @@ dockIp() {
   docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$@"
 }
 
-docker pull vitorenesduarte/vcd:latest
+image="vitorenesduarte/vcd:latest"
+docker pull ${image}
 docker run --rm -d -p 2181:2181 zookeeper &
 sleep 3
 
@@ -18,21 +19,21 @@ docker run --rm --net host -e "ZK=${zkAddress}"\
     -e "NODE_NUMBER=3" \
     -e "HPORT=5000" \
     -e "CPORT=6000" \
-    -p 6000:6000 vitorenesduarte/vcd >& mgb1.txt &
+    -p 6000:6000 ${image} >& mgb1.txt &
 
 docker run --rm --net host -e "ZK=${zkAddress}" \
     -e "ID=1" \
     -e "NODE_NUMBER=3" \
     -e "HPORT=5001" \
     -e "CPORT=6001" \
-    -p 6001:6001 vitorenesduarte/vcd >& mgb2.txt &
+    -p 6001:6001 ${image} >& mgb2.txt &
 
 docker run --rm --net host -e "ZK=${zkAddress}" \
     -e "ID=2" \
     -e "NODE_NUMBER=3" \
     -e "HPORT=5002" \
     -e "CPORT=6002" \
-    -p 6002:6002 vitorenesduarte/vcd >& mgb3.txt &
+    -p 6002:6002 ${image} >& mgb3.txt &
 
 
 #./bin/ycsb run mgbsmap -s -P workloads/workloadc -threads 64 \
