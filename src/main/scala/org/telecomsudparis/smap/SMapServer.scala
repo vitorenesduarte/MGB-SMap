@@ -85,7 +85,6 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       case ex: InterruptedException =>
         logger.warning("SMapServer Receive Loop Interrupted: " ++ serverId)
       case ex: Exception =>
-        ex.printStackTrace()
         throw new RuntimeException()
     }
   }
@@ -99,20 +98,15 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       while (!stop) {
         val m: Message = queue.take()
         msgList.add(m)
-
         queue.drainTo(msgList)
         val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
-        //TODO: Catch exception
         javaSocket.send(mgbMsgSet)
-
         msgList.clear()
-
       }
     } catch {
       case ex: InterruptedException =>
         logger.warning("SMapServer Consume Loop Interrupted at: " ++ serverId)
       case ex: Exception =>
-        ex.printStackTrace()
         throw new RuntimeException()
     }
   }
@@ -128,19 +122,18 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         readList.add(readOperation)
         localReadsQueue.drainTo(readList)
 
-        lock.readLock().lock()
+        // lock.readLock().lock()
         processReads.time {
           //Since we're doing local reads I assume DELIVERED msgStatus
           readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
         }
-        lock.readLock().unlock()
+        // lock.readLock().unlock()
         readList.clear()
       }
     } catch {
       case ex: InterruptedException =>
         logger.warning("SMapServer LocalRead Consume Loop Interrupted at: " ++ serverId)
       case ex: Exception =>
-        ex.printStackTrace()
         throw new RuntimeException()
     }
   }
@@ -166,9 +159,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val msgSetAsList = mset.getMessagesList.asScala
     val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
 
-    lock.writeLock().lock()
+    // lock.writeLock().lock()
     unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
-    lock.writeLock().unlock()
+    // lock.writeLock().unlock()
 
   }
 
@@ -195,6 +188,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val cid = CallerId(deliveredOperation.callerId)
     val opItem = deliveredOperation.getItem
     val opItemKey = opItem.key
+
+    logger.info(deliveredOperation+" -> "+msgSetStatus)
 
     deliveredOperation.operationType match {
       case INSERT =>
