@@ -1,6 +1,7 @@
 package org.telecomsudparis.smap
 
 import java.lang.Thread
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 import com.google.protobuf.{ByteString => ProtobufByteString}
 
@@ -23,7 +24,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
   }
 
   private[this] val waitPendingsTime = metrics.timer("waitPendingsTime")
-  private[this] val promiseMapTimeRead = metrics.timer("promiseMapRead")
+  private[this] val timeSingleRead = metrics.timer("timeSingleRead")
   private[this] val promiseMapTimeWrite = metrics.timer("promiseMapWrite")
 
   def sendCommand(operation: MapCommand): ResultsCollection =  {
@@ -45,25 +46,34 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         mapServer.pendingMap += (callerUuid -> writePromise)
       }
 
-      val pro = PromiseResults(Promise[ResultsCollection]())
-      val fut = pro.pResult.future
-
-      mapServer.promiseMap += (opUuid -> pro)
-
-      if (mapServer.localReads && isRead) {
-        mapServer.localReadsQueue.put(operation)
+      if(isRead && mapServer.localReads){
+        timeSingleRead.time {
+          var localReadsResult = new ResultsCollection()
+          mapServer.lock.readLock().lock()
+          localReadsResult = {
+            if (mapServer.mapCopy isDefinedAt operation.getItem.key) {
+              val getItem = Item(key = operation.getItem.key, fields = mapServer.mapCopy(operation.getItem.key).toMap)
+              ResultsCollection(Seq(getItem))
+            } else {
+              ResultsCollection(Seq(Item(key = operation.getItem.key)))
+            }
+          }
+          mapServer.lock.readLock().unlock()
+          response = localReadsResult
+        }
       } else {
+        val pro = PromiseResults(Promise[ResultsCollection]())
+        val fut = pro.pResult.future
+
+        mapServer.promiseMap += (opUuid -> pro)
+
         val msgMGB = SMapClient.generateMsg(operation)
         mapServer.queue.put(msgMGB)
-      }
 
-      if(isRead) {
-        response = promiseMapTimeRead.time(Await.result(fut, Duration.Inf))
-      } else {
         response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
-      }
-      mapServer.promiseMap -= opUuid
 
+        mapServer.promiseMap -= opUuid
+      }
     } catch {
       case e: Exception => e.printStackTrace()
     }

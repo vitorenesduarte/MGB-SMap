@@ -35,6 +35,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   private[this] val processUpdateCommit = metrics.timer("processUpdateCommit")
   private[this] val processUpdateDelivered = metrics.timer("processUpdateDelivered")
 
+  private[this] val scanSlicing = metrics.timer("scanSlicing")
+
   var serverId: String = Thread.currentThread().getName + java.util.UUID.randomUUID.toString
   var javaClientConfig = Config.parseArgs(config)
 
@@ -223,7 +225,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
                 mapCopy += (opItemKey -> mutableFieldsMap)
               }
               ringBellPending(cid)
-            }else{
+            } else {
               throw new RuntimeException()
             }
           }
@@ -247,16 +249,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           if (msgSetStatus == Status.DELIVERED) {
             val result: ResultsCollection = {
               if (mapCopy isDefinedAt opItemKey) {
-                val tempResult: MMap[String, String] = MMap()
-                //From YCSB, if fields set is empty must read all fields
-                val keySet = if (opItem.fields.isEmpty) mapCopy(opItemKey).keys else opItem.fields.keys
-                for (fieldKey <- keySet) {
-                  if (mapCopy(opItemKey) isDefinedAt fieldKey)
-                    tempResult += (fieldKey -> mapCopy(opItemKey)(fieldKey))
-                  //else should do tempResult += (fieldKey -> defaultEmptyValue)
-                }
-                //Item.fields is an immutableMap, making a conversion then.
-                val getItem = Item(key = opItemKey, fields = tempResult.toMap)
+                val getItem = Item(key = opItemKey, fields = mapCopy(opItemKey).toMap)
                 ResultsCollection(Seq(getItem))
               } else {
                 ResultsCollection(Seq(Item(key = opItemKey)))
@@ -269,9 +262,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       case SCAN =>
         if(msgSetStatus == Status.DELIVERED){
           var seqResults: Seq[Item] = Seq()
-
           if(mapCopy isDefinedAt deliveredOperation.startKey) {
-            val mapCopyScan = (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount)
+            val mapCopyScan = scanSlicing.time { (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount) }
             for (elem <- mapCopyScan.values) {
               val tempResult: MMap[String, String] = MMap()
               //From YCSB, if fields set is empty must read all fields
