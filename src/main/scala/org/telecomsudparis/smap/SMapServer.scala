@@ -205,7 +205,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
             ringBellPending(cid)
-          }else{
+          } else {
             throw new RuntimeException()
           }
         }
@@ -238,7 +238,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
             ringBellPending(cid)
-          }else{
+          } else {
             throw new RuntimeException()
           }
         }

@@ -7,6 +7,7 @@ import com.google.protobuf.{ByteString => ProtobufByteString}
 
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.collection.mutable.{Map => MMap}
 import java.util.logging.Logger
 
 import org.telecomsudparis.smap.SMapServiceServer.Instrumented
@@ -25,6 +26,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
   private[this] val waitPendingsTime = metrics.timer("waitPendingsTime")
   private[this] val timeSingleRead = metrics.timer("timeSingleRead")
+  private[this] val timeSingleScan = metrics.timer("timeSingleScan")
   private[this] val promiseMapTimeWrite = metrics.timer("promiseMapWrite")
 
   def sendCommand(operation: MapCommand): ResultsCollection =  {
@@ -46,20 +48,48 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         mapServer.pendingMap += (callerUuid -> writePromise)
       }
 
-      if(isRead && mapServer.localReads){
-        timeSingleRead.time {
-          var localReadsResult = new ResultsCollection()
-          mapServer.lock.readLock().lock()
-          localReadsResult = {
-            if (mapServer.mapCopy isDefinedAt operation.getItem.key) {
-              val getItem = Item(key = operation.getItem.key, fields = mapServer.mapCopy(operation.getItem.key).toMap)
-              ResultsCollection(Seq(getItem))
-            } else {
-              ResultsCollection(Seq(Item(key = operation.getItem.key)))
+      //Quick hack to test performance.
+      if(isRead && mapServer.localReads) {
+        if(operation.operationType.isGet) {
+          timeSingleRead.time {
+            var localReadsResult = new ResultsCollection()
+            mapServer.lock.readLock().lock()
+            localReadsResult = {
+              if (mapServer.mapCopy isDefinedAt operation.getItem.key) {
+                val getItem = Item(key = operation.getItem.key, fields = mapServer.mapCopy(operation.getItem.key).toMap)
+                ResultsCollection(Seq(getItem))
+              } else {
+                ResultsCollection(Seq(Item(key = operation.getItem.key)))
+              }
             }
+            mapServer.lock.readLock().unlock()
+            response = localReadsResult
           }
-          mapServer.lock.readLock().unlock()
-          response = localReadsResult
+        }
+        if(operation.operationType.isScan) {
+          timeSingleScan.time {
+            var seqResults: Seq[Item] = Seq()
+            val opItem = operation.getItem
+            //FIXME: Can I release the lock earlier?
+            mapServer.lock.readLock().lock()
+            if (mapServer.mapCopy isDefinedAt operation.startKey) {
+              val mapCopyScan = (mapServer.mapCopy from operation.startKey).slice(0, operation.recordcount)
+              for (elem <- mapCopyScan.values) {
+                val tempResult: MMap[String, String] = MMap()
+                //From YCSB, if fields set is empty must read all fields
+                val keySet = if (opItem.fields.isEmpty) mapServer.mapCopy(operation.startKey).keys else opItem.fields.keys
+                for (fieldKey <- keySet) {
+                  if (elem isDefinedAt fieldKey)
+                    tempResult += (fieldKey -> elem(fieldKey))
+                  //else should do tempResult += (fieldKey -> defaultEmptyValue)
+                }
+                val tempItem = Item(fields = tempResult.toMap)
+                seqResults :+= tempItem
+              }
+            }
+            mapServer.lock.readLock().unlock()
+            response = ResultsCollection(seqResults)
+          }
         }
       } else {
         val pro = PromiseResults(Promise[ResultsCollection]())

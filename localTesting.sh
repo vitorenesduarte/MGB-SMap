@@ -54,7 +54,6 @@ while [ ${up} != 3 ]; do
 done
 
 echo "Starting SMAP"
-
 docker run --rm --net host -e "ZHOST=${localHost}"\
     -e "ZPORT=5000" \
     -e "SERVERPORT=8980" \
