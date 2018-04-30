@@ -44,7 +44,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   //var javaSocket = DummySocket.create(javaClientConfig)
 
   var mapCopy = MTreeMap[String, MMap[String, String]]()
-  //var pendingMap = CTrieMap[CallerId, Promise[Boolean]]()
+  var pendingMap = CTrieMap[CallerId, Promise[Boolean]]()
   var promiseMap = CTrieMap[OperationUniqueId, PromiseResults]()
   var queue = new LinkedBlockingQueue[Message]()
   var localReadsQueue = new LinkedBlockingQueue[MapCommand]()
@@ -174,7 +174,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     }
   }
 
-  /*
+
   def ringBellPending(cid: CallerId): Unit = {
     if(pendingMap isDefinedAt cid) {
       pendingMap(cid) success true
@@ -182,7 +182,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       if (verbose) logger.fine("ring pending map" + pendingMap)
     }
   }
-  */
+
 
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
     import org.telecomsudparis.smap.MapCommand.OperationType._
@@ -199,21 +199,21 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
     deliveredOperation.operationType match {
       case INSERT =>
-        if(msgSetStatus == Status.COMMITTED){
+        if(msgSetStatus == Status.DURABLE){
           ringBell(uuid, ResultsCollection())
         } else {
           //opItem is immutable.Map, doing a conversion.
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
             mapCopy += (opItemKey -> mutableFieldsMap)
-            //ringBellPending(cid)
+            ringBellPending(cid)
           } else {
             throw new RuntimeException()
           }
         }
 
       case UPDATE =>
-        if(msgSetStatus == Status.COMMITTED){
+        if(msgSetStatus == Status.DURABLE){
           processUpdateCommit.time {
             ringBell(uuid, ResultsCollection())
           }
@@ -226,7 +226,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
               } else {
                 mapCopy += (opItemKey -> mutableFieldsMap)
               }
-              //ringBellPending(cid)
+              ringBellPending(cid)
             } else {
               throw new RuntimeException()
             }
@@ -234,12 +234,12 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         }
 
       case DELETE =>
-        if(msgSetStatus == Status.COMMITTED){
+        if(msgSetStatus == Status.DURABLE){
           ringBell(uuid, ResultsCollection())
         } else {
           if(msgSetStatus == Status.DELIVERED){
             mapCopy -= opItemKey
-            //ringBellPending(cid)
+            ringBellPending(cid)
           } else {
             throw new RuntimeException()
           }
