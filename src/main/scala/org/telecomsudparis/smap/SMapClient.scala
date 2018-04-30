@@ -38,6 +38,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
       val callerUuid = CallerId(operation.callerId)
 
       //To achieve sequential consistency, reads must wait pending writes.
+      /*
       if (isRead) {
         waitPendings(callerUuid)
       } else {
@@ -47,6 +48,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         }
         mapServer.pendingMap += (callerUuid -> writePromise)
       }
+      */
 
       //Quick hack to test performance.
       if(isRead && mapServer.localReads) {
@@ -74,6 +76,11 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
             mapServer.lock.readLock().lock()
             if (mapServer.mapCopy isDefinedAt operation.startKey) {
               val mapCopyScan = (mapServer.mapCopy from operation.startKey).slice(0, operation.recordcount)
+
+              for(elem <- mapCopyScan.values){
+                seqResults :+= Item(fields = elem.toMap)
+              }
+              /*
               for (elem <- mapCopyScan.values) {
                 val tempResult: MMap[String, String] = MMap()
                 //From YCSB, if fields set is empty must read all fields
@@ -86,6 +93,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
                 val tempItem = Item(fields = tempResult.toMap)
                 seqResults :+= tempItem
               }
+              */
             }
             mapServer.lock.readLock().unlock()
             response = ResultsCollection(seqResults)
@@ -111,6 +119,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
     response
   }
 
+  /*
   def waitPendings(pending: CallerId): Unit = {
     mapServer.pendingMap.get(pending) match {
       case Some(promise: Promise[Boolean]) =>
@@ -119,6 +128,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
       case _  =>
     }
   }
+  */
 
 }
 
