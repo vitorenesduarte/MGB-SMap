@@ -150,8 +150,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   def serverClose(): Unit = {
     this.stop = true
     pool.shutdownNow()
-    javaSocket.closeRw()
-    //dummySocket.closeRw()
+    javaSocket.close()
   }
 
   /**
