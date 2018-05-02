@@ -199,9 +199,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     deliveredOperation.operationType match {
       case INSERT =>
         if(msgSetStatus == Status.DURABLE){
-	  // bye
+          ringBell(uuid, ResultsCollection())
         } else {
-	  ringBell(uuid, ResultsCollection())
           //opItem is immutable.Map, doing a conversion.
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           if(msgSetStatus == Status.DELIVERED){
