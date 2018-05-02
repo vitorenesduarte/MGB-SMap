@@ -59,7 +59,7 @@ done
 #    -e "RETRIES=400" \
 #    -e "VERBOSE=false" \
 #    -e "STATIC=true" \
-#    tfr011/mgb-smap:latest &> smap1.txt &
+#    0track/mgb-smap:latest &> smap1.txt &
 
 # docker run --rm --net host -e "ZHOST=${localHost}"\
 #    -e "ZPORT=5001" \
@@ -67,7 +67,7 @@ done
 #    -e "VERBOSE=false" \
 #    -e "RETRIES=400" \
 #    -e "STATIC=true" \
-#    tfr011/mgb-smap:latest &> smap2.txt &
+#    0track/mgb-smap:latest &> smap2.txt &
 
 # up=0
 # while [ ${up} != 2 ]; do
