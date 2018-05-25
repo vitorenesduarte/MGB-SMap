@@ -11,7 +11,7 @@ dockIp() {
 }
 
 localHost=127.0.0.1
-vcd_image="vitorenesduarte/vcd:outside"
+vcd_image="vitorenesduarte/vcd:latest"
 docker pull ${vcd_image}
 docker run --rm -d -p 2181:2181 zookeeper &
 sleep 3
