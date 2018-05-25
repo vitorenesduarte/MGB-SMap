@@ -300,9 +300,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 object SMapServer {
   //WARNING: Returning only the data field.
   def unmarshallMGBMsg(m: Message): MapCommand = {
-    val hashMGB = m.getHash
     val dataMGB = m.getData
-
     MapCommand.parseFrom(dataMGB.toByteArray)
   }
 
