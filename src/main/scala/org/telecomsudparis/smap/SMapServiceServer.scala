@@ -46,7 +46,7 @@ object SMapServiceServer extends App {
 
     opt[Int]("retries").abbr("rt").action( (x, c) =>
       c.copy(retries = x) ).text("Zookeeper Connection Retries is an integer property. Default: 300")
-    
+
     opt[Boolean]("localReads").abbr("lr").action( (x, c) =>
       c.copy(lReads = x) ).text("Local Reads is an boolean property. Default: true")
 
@@ -99,7 +99,7 @@ object SMapServiceServer extends App {
 
       var serverSMap = new SMapServer(localReads = config.lReads,
         verbose = config.verbosity,
-        Array("-zk=" + config.zkHost + ":" + config.zkPort,"-batch_wait="+config.batch_wait ), retries = config.retries, staticConnection = config.static)
+        Array("-zk=" + config.zkHost + ":" + config.zkPort), retries = config.retries, staticConnection = config.static)
 
       var clientSMap = new SMapClient(verbose = config.verbosity,
         mapServer = serverSMap)
