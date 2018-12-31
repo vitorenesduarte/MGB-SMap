@@ -46,10 +46,7 @@ object SMapServiceServer extends App {
 
     opt[Int]("retries").abbr("rt").action( (x, c) =>
       c.copy(retries = x) ).text("Zookeeper Connection Retries is an integer property. Default: 300")
-
-    opt[Int]("batch_wait").abbr("bw").action( (x, c) =>
-      c.copy(batch_wait = x) ).text("Wait time for each batch. Default: 0")
-
+    
     opt[Boolean]("localReads").abbr("lr").action( (x, c) =>
       c.copy(lReads = x) ).text("Local Reads is an boolean property. Default: true")
 
