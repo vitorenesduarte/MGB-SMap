@@ -102,6 +102,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         msgList.add(m)
         queue.drainTo(msgList)
         val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
+        if (verbose) {
+          logger.fine(mgbMsgSet.toString)
+        }
         javaSocket.send(mgbMsgSet)
         msgList.clear()
       }

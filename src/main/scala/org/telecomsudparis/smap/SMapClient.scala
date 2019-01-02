@@ -38,18 +38,17 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
       val callerUuid = CallerId(operation.callerId)
 
       // To achieve sequential consistency, reads must wait pending writes.
-      // if (mapServer.localReads) {
-      //   if (isRead) {
-      //     waitPendings(callerUuid)
-      //   } else {
-      //     val writePromise = Promise[Boolean]()
-      //     if (verbose) {
-      //       logger.fine("add pending map" + callerUuid)
-      //     }
-      //     mapServer.pendingMap += (callerUuid -> writePromise)
-      //   }
-      // }
-
+       if (mapServer.localReads) {
+         if (isRead) {
+           waitPendings(callerUuid)
+         } else {
+           val writePromise = Promise[Boolean]()
+           if (verbose) {
+             logger.fine("add pending map" + callerUuid)
+           }
+           mapServer.pendingMap += (callerUuid -> writePromise)
+         }
+       }
 
       //Quick hack to test performance.
       if(isRead && mapServer.localReads) {
