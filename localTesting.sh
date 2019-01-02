@@ -61,7 +61,7 @@ docker run --rm --net host -e "ZHOST=${localHost}"\
    -e "LOCALREADS=false" \
    -e "STATIC=true" \
    -e "BW=5" \
-   0track/mgb-smap:latest &> smap1.txt &
+   0track/mgb-smap:new_batching &> smap1.txt &
 
 docker run --rm --net host -e "ZHOST=${localHost}"\
    -e "ZPORT=5001" \
@@ -71,7 +71,7 @@ docker run --rm --net host -e "ZHOST=${localHost}"\
    -e "LOCALREADS=false" \
    -e "STATIC=true" \
    -e "BW=5" \
-   0track/mgb-smap:latest &> smap2.txt &
+   0track/mgb-smap:new_batching &> smap2.txt &
 
 up=0
 while [ ${up} != 2 ]; do
