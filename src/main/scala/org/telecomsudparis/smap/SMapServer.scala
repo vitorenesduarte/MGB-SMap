@@ -72,6 +72,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   if(verbose) {
     logger.info("SMapServer Id: " + serverId)
     logger.info("SMapServer Local Reads: " + localReads)
+    logger.info("SMapServer verbose: " + verbose)
   }
 
   /**
@@ -103,7 +104,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         queue.drainTo(msgList)
         val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
         if (verbose) {
-          logger.fine(mgbMsgSet.toString)
+          logger.info(mgbMsgSet.toString)
         }
         javaSocket.send(mgbMsgSet)
         msgList.clear()
@@ -181,7 +182,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     if(pendingMap isDefinedAt cid) {
       pendingMap(cid) success true
       pendingMap -= cid
-      if (verbose) logger.fine("ring pending map" + pendingMap)
+      if (verbose) logger.info("ring pending map" + pendingMap)
     }
   }
 
