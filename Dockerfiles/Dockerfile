@@ -24,7 +24,7 @@ RUN git clone -b new_batching https://github.com/vitorenesduarte/VCD-java-client
 RUN mvn -f VCD-java-client clean install -DskipTests
 
 ADD https://api.github.com/repos/tuanir/MGB-SMap/git/refs/heads/new_batching mgb-smap-version.json
-RUN git clone https://github.com/tuanir/MGB-SMap.git
+RUN git -b new_batching https://github.com/tuanir/MGB-SMap.git
 RUN make -C MGB-SMap compile jars
 
 WORKDIR /app/MGB-SMap

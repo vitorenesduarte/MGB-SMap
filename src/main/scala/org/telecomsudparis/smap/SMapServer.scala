@@ -101,14 +101,10 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       while (!stop) {
         msgList.add(queue.take())
         queue.drainTo(msgList)
-        msgList.forEach(
-          m =>
-          {
-            if (verbose) {
-              logger.info(m.toString)
-            }
-            javaSocket.send(m)
-          })
+        msgList.forEach(javaSocket.send(_))
+        if (verbose) {
+          logger.info(msgList.toString)
+        }
         msgList.clear()
       }
     } catch {
