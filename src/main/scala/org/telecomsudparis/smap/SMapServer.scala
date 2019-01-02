@@ -99,14 +99,16 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     try {
       var msgList = ListBuffer[Message]().asJava
       while (!stop) {
-        val m: Message = queue.take()
-        msgList.add(m)
+        msgList.add(queue.take())
         queue.drainTo(msgList)
-        val mgbMsgSet = MessageSet.newBuilder().setStatus(MessageSet.Status.START).addAllMessages(msgList).build()
-        if (verbose) {
-          logger.info(mgbMsgSet.toString)
-        }
-        javaSocket.send(mgbMsgSet)
+        msgList.forEach(
+          m =>
+          {
+            if (verbose) {
+              logger.info(m.toString)
+            }
+            javaSocket.send(m)
+          })
         msgList.clear()
       }
     } catch {
