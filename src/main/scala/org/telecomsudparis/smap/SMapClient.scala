@@ -105,7 +105,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
         mapServer.promiseMap += (opUuid -> pro)
 
-        val msgMGB = SMapClient.generateMsg(operation)
+        val msgMGB = SMapClient.generateMsg(operation, mapServer.localReads)
         mapServer.queue.put(msgMGB)
 
         response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
@@ -157,9 +157,9 @@ object SMapClient {
   }
   */
 
-  def generateMsg(toMGB: MapCommand): Message = synchronized {
+  def generateMsg(toMGB: MapCommand, localReads: Boolean): Message = synchronized {
     val mgbHash =
-      if(toMGB.operationType.isScan || toMGB.operationType.isGet) {
+      if(localReads && (toMGB.operationType.isScan || toMGB.operationType.isGet)) {
         //hash == new byte[]{0} in case of read ops
         //NOTE: "And we only send collects of white color messages to a majority"
         ProtobufByteString.copyFrom(Array[Byte](0))
