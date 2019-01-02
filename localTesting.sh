@@ -60,6 +60,7 @@ docker run --rm --net host -e "ZHOST=${localHost}"\
    -e "VERBOSE=true" \
    -e "LOCALREADS=false" \
    -e "STATIC=true" \
+   -e "BW=5" \
    0track/mgb-smap:latest &> smap1.txt &
 
 docker run --rm --net host -e "ZHOST=${localHost}"\
@@ -69,6 +70,7 @@ docker run --rm --net host -e "ZHOST=${localHost}"\
    -e "VERBOSE=true" \
    -e "LOCALREADS=false" \
    -e "STATIC=true" \
+   -e "BW=5" \
    0track/mgb-smap:latest &> smap2.txt &
 
 up=0

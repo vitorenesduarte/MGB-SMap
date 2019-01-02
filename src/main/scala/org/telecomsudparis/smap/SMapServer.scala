@@ -73,6 +73,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     logger.info("SMapServer Id: " + serverId)
     logger.info("SMapServer Local Reads: " + localReads)
     logger.info("SMapServer verbose: " + verbose)
+    logger.info("SMapServer batching : " + javaClientConfig.getBatching)
   }
 
   /**

@@ -37,6 +37,7 @@ ENV ZPORT 2181
 ENV STATIC false
 ENV TIMESTAMP undefined
 ENV RETRIES 300
+ENV BW 0
 
 CMD ["sh", "-c", "/app/MGB-SMap/target/pack/bin/MGB-SMap -sp ${SERVERPORT} \
                 -lr ${LOCALREADS} \
@@ -45,4 +46,5 @@ CMD ["sh", "-c", "/app/MGB-SMap/target/pack/bin/MGB-SMap -sp ${SERVERPORT} \
                 -zkp ${ZPORT} \
                 -st ${STATIC} \
                 -rt ${RETRIES} \
+                -bw ${BW} \
                 -ts ${TIMESTAMP}"]
