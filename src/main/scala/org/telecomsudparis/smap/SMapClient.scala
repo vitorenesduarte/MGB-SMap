@@ -159,14 +159,7 @@ object SMapClient {
   }
   */
   def generateMsg(toMGB: MapCommand): Message = synchronized {
-    val mgbHash =
-      if(toMGB.operationType.isGet) {
-        // white color
-        ProtobufByteString.copyFrom(Array[Byte](0))
-      } else {
-        // FIXME scan operations.
-        ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
-      }
+    val mgbHash = ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
     val mgbData = toMGB.toByteString
     Message.newBuilder().setData(mgbData).addHashes(mgbHash).build()
   }
