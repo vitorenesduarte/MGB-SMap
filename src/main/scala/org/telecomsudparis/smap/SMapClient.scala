@@ -11,6 +11,8 @@ import scala.collection.mutable.{Map => MMap}
 import java.util.logging.Logger
 
 import org.telecomsudparis.smap.SMapServiceServer.Instrumented
+import com.google.common.primitives.Ints
+import com.google.protobuf.ByteString
 
 /**
   * Producer Class
@@ -160,8 +162,13 @@ object SMapClient {
   def generateMsg(toMGB: MapCommand): Message = synchronized {
     val mgbHash = ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
     val mgbData = toMGB.toByteString
-    val msg: Message = Message.newBuilder().addHashes(mgbHash).setData(mgbData).build()
-    msg
+    val builder = Message.newBuilder()
+    builder.setData(mgbData)
+    toMGB.operationType match {
+      case MapCommand.OperationType.GET => ProtobufByteString.copyFrom(Array[Byte](0))
+      case _ => builder.addHashes(mgbHash)
+    }
+    builder.build()
   }
 
   //TODO: Remove .toString
