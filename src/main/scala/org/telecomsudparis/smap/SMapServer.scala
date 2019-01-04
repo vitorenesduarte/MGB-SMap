@@ -32,6 +32,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   private[this] val processReads = metrics.timer("processReads")
 
   private[this] val processOneRead = metrics.timer("processOneRead")
+  private[this] val processOneScan = metrics.timer("processOneScan")
   private[this] val processUpdateCommit = metrics.timer("processUpdateCommit")
   private[this] val processUpdateDelivered = metrics.timer("processUpdateDelivered")
 
@@ -248,9 +249,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         }
 
       case GET =>
-        //in case of (localReads == false) apply GET only to the caller
         processOneRead.time {
-          if (msgSetStatus == Status.DELIVERED) {
+          if ((msgSetStatus == Status.DELIVERED) && (promiseMap isDefinedAt uuid)) {
             val result: ResultsCollection = {
               if (mapCopy isDefinedAt opItemKey) {
                 val getItem = Item(key = opItemKey, fields = mapCopy(opItemKey).toMap)
@@ -264,25 +264,29 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         }
 
       case SCAN =>
-        if(msgSetStatus == Status.DELIVERED){
-          var seqResults: Seq[Item] = Seq()
-          if(mapCopy isDefinedAt deliveredOperation.startKey) {
-            val mapCopyScan = scanSlicing.time { (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount) }
-            for (elem <- mapCopyScan.values) {
-              val tempResult: MMap[String, String] = MMap()
-              //From YCSB, if fields set is empty must read all fields
-              val keySet = if (opItem.fields.isEmpty) mapCopy(deliveredOperation.startKey).keys else opItem.fields.keys
-              for (fieldKey <- keySet) {
-                if (elem isDefinedAt fieldKey)
-                  tempResult += (fieldKey -> elem(fieldKey))
-                //else should do tempResult += (fieldKey -> defaultEmptyValue)
+        processOneScan.time {
+          if ((msgSetStatus == Status.DELIVERED) && (promiseMap isDefinedAt uuid)) {
+            var seqResults: Seq[Item] = Seq()
+            if (mapCopy isDefinedAt deliveredOperation.startKey) {
+              val mapCopyScan = scanSlicing.time {
+                (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount)
               }
-              val tempItem = Item(fields = tempResult.toMap)
-              seqResults :+= tempItem
+              for (elem <- mapCopyScan.values) {
+                val tempResult: MMap[String, String] = MMap()
+                //From YCSB, if fields set is empty must read all fields
+                val keySet = if (opItem.fields.isEmpty) mapCopy(deliveredOperation.startKey).keys else opItem.fields.keys
+                for (fieldKey <- keySet) {
+                  if (elem isDefinedAt fieldKey)
+                    tempResult += (fieldKey -> elem(fieldKey))
+                  //else should do tempResult += (fieldKey -> defaultEmptyValue)
+                }
+                val tempItem = Item(fields = tempResult.toMap)
+                seqResults :+= tempItem
+              }
             }
+            //Returning empty sequence of items in case of nondefined startingKey
+            ringBell(uuid, ResultsCollection(seqResults))
           }
-          //Returning empty sequence of items in case of nondefined startingKey
-          ringBell(uuid, ResultsCollection(seqResults))
         }
 
       case _ => println("Unknown Operation")
