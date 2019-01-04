@@ -161,7 +161,7 @@ object SMapClient {
   def generateMsg(toMGB: MapCommand): Message = synchronized {
     val mgbHash = ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
     val mgbData = toMGB.toByteString
-    Message.newBuilder().setData(mgbData).addHashes(mgbHash).build()
+    Message.newBuilder().setData(mgbData).addHashes(mgbHash).setPure(toMGB.operationType.isScan || toMGB.operationType.isGet).build()
   }
 
   //TODO: Remove .toString
