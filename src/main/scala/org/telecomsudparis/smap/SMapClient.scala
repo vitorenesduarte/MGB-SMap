@@ -40,7 +40,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
       val callerUuid = CallerId(operation.callerId)
 
       if (verbose) {
-        logger.info(opUuid.toString+" -> START")
+        logger.info(opUuid + " -> START")
       }
 
       // To achieve sequential consistency, reads must wait pending writes.
