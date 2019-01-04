@@ -39,6 +39,10 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
       val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
       val callerUuid = CallerId(operation.callerId)
 
+      if (verbose) {
+        logger.info(opUuid.toString+" -> START")
+      }
+
       // To achieve sequential consistency, reads must wait pending writes.
        if (mapServer.localReads) {
          if (isRead) {

@@ -104,7 +104,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         queue.drainTo(msgList)
         msgList.forEach(javaSocket.send(_))
         if (verbose) {
-          logger.info(msgList.toString)
+          msgList.forEach(m => logger.fine(m.toString))
         }
         msgList.clear()
       }
