@@ -19,8 +19,8 @@ RUN \
   apt-get install sbt && \
   sbt sbtVersion
 
-ADD https://api.github.com/repos/vitorenesduarte/VCD-java-client/git/refs/heads/pure_functions vcd-java-client-version.json
-RUN git clone -b pure_functions https://github.com/vitorenesduarte/VCD-java-client
+ADD https://api.github.com/repos/vitorenesduarte/VCD-java-client/git/refs/heads/master vcd-java-client-version.json
+RUN git clone https://github.com/vitorenesduarte/VCD-java-client
 RUN mvn -f VCD-java-client clean install -DskipTests
 
 ADD https://api.github.com/repos/tuanir/MGB-SMap/git/refs/heads/pure_functions mgb-smap-version.json

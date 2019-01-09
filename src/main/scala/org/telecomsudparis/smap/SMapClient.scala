@@ -111,7 +111,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
         mapServer.promiseMap += (opUuid -> pro)
 
-        val msgMGB = SMapClient.generateMsg(operation)
+        val msgMGB = SMapClient.generateMsg(operation,clientId)
         mapServer.queue.put(msgMGB)
 
         response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
@@ -162,10 +162,11 @@ object SMapClient {
     builder.build()
   }
   */
-  def generateMsg(toMGB: MapCommand): Message = synchronized {
+  def generateMsg(toMGB: MapCommand, clientID: String): Message = synchronized {
     val mgbHash = ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
     val mgbData = toMGB.toByteString
-    Message.newBuilder().setData(mgbData).addHashes(mgbHash).setPure(toMGB.operationType.isScan || toMGB.operationType.isGet).build()
+    val id = ProtobufByteString.copyFromUtf8(clientID)
+    Message.newBuilder().setFrom(id).setData(mgbData).addHashes(mgbHash).setPure(toMGB.operationType.isScan || toMGB.operationType.isGet).build()
   }
 
   //TODO: Remove .toString
