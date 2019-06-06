@@ -202,7 +202,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
     deliveredOperation.operationType match {
       case INSERT =>
-        if(msgSetStatus == Status.DURABLE){
+        if(msgSetStatus == Status.COMMIT){
           ringBell(uuid, ResultsCollection())
         } else {
           //opItem is immutable.Map, doing a conversion.
@@ -216,7 +216,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         }
 
       case UPDATE =>
-        if(msgSetStatus == Status.DURABLE){
+        if(msgSetStatus == Status.COMMIT){
           processUpdateCommit.time {
             ringBell(uuid, ResultsCollection())
           }
@@ -237,7 +237,7 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
         }
 
       case DELETE =>
-        if(msgSetStatus == Status.DURABLE){
+        if(msgSetStatus == Status.COMMIT){
           ringBell(uuid, ResultsCollection())
         } else {
           if(msgSetStatus == Status.DELIVERED){
