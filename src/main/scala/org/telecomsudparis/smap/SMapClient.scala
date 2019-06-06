@@ -9,10 +9,11 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.collection.mutable.{Map => MMap}
 import java.util.logging.Logger
-
 import org.telecomsudparis.smap.SMapServiceServer.Instrumented
 import com.google.common.primitives.Ints
 import com.google.protobuf.ByteString
+
+import org.imdea.vcd.Generator.BLACK
 
 /**
   * Producer Class
@@ -166,7 +167,11 @@ object SMapClient {
     val mgbHash = ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
     val mgbData = toMGB.toByteString
     val id = ProtobufByteString.copyFromUtf8(clientID)
-    Message.newBuilder().setFrom(id).setData(mgbData).addHashes(mgbHash).setPure(toMGB.operationType.isGet).build()
+    val builder = Message.newBuilder().setFrom(id).setData(mgbData).addHashes(mgbHash).setPure(toMGB.operationType.isGet)
+    if (toMGB.operationType.isScan) {
+      builder.addHashes(BLACK)
+    }
+    builder.build()
   }
 
   //TODO: Remove .toString
