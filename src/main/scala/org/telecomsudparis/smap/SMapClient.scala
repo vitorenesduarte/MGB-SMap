@@ -9,8 +9,11 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.collection.mutable.{Map => MMap}
 import java.util.logging.Logger
-
 import org.telecomsudparis.smap.SMapServiceServer.Instrumented
+import com.google.common.primitives.Ints
+import com.google.protobuf.ByteString
+
+import org.imdea.vcd.Generator.BLACK
 
 /**
   * Producer Class
@@ -36,6 +39,10 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
       val opUuid = OperationUniqueId(operation.operationUuid)
       val isRead: Boolean = operation.operationType.isScan || operation.operationType.isGet
       val callerUuid = CallerId(operation.callerId)
+
+      if (verbose) {
+        logger.info(opUuid + " -> START")
+      }
 
       // To achieve sequential consistency, reads must wait pending writes.
        if (mapServer.localReads) {
@@ -105,7 +112,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
         mapServer.promiseMap += (opUuid -> pro)
 
-        val msgMGB = SMapClient.generateMsg(operation)
+        val msgMGB = SMapClient.generateMsg(operation,clientId)
         mapServer.queue.put(msgMGB)
 
         response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
@@ -156,12 +163,15 @@ object SMapClient {
     builder.build()
   }
   */
-
-  def generateMsg(toMGB: MapCommand): Message = synchronized {
+  def generateMsg(toMGB: MapCommand, clientID: String): Message = synchronized {
     val mgbHash = ProtobufByteString.copyFrom(toMGB.getItem.key.getBytes())
     val mgbData = toMGB.toByteString
-    val msg: Message = Message.newBuilder().addHashes(mgbHash).setData(mgbData).build()
-    msg
+    val id = ProtobufByteString.copyFromUtf8(clientID)
+    val builder = Message.newBuilder().setFrom(id).setData(mgbData).addHashes(mgbHash).setPure(toMGB.operationType.isGet)
+    if (toMGB.operationType.isScan) {
+      builder.addHashes(BLACK)
+    }
+    builder.build()
   }
 
   //TODO: Remove .toString

@@ -57,17 +57,21 @@ done
 #    -e "ZPORT=5000" \
 #    -e "SERVERPORT=8980" \
 #    -e "RETRIES=400" \
-#    -e "VERBOSE=false" \
+#    -e "VERBOSE=true" \
+#    -e "LOCALREADS=false" \
 #    -e "STATIC=true" \
-#    0track/mgb-smap:latest &> smap1.txt &
+#    -e "BW=5" \
+#    0track/mgb-smap:new_batching &> smap1.txt &
 
 # docker run --rm --net host -e "ZHOST=${localHost}"\
 #    -e "ZPORT=5001" \
 #    -e "SERVERPORT=8981" \
-#    -e "VERBOSE=false" \
 #    -e "RETRIES=400" \
+#    -e "VERBOSE=true" \
+#    -e "LOCALREADS=false" \
 #    -e "STATIC=true" \
-#    0track/mgb-smap:latest &> smap2.txt &
+#    -e "BW=5" \
+#    0track/mgb-smap:new_batching &> smap2.txt &
 
 # up=0
 # while [ ${up} != 2 ]; do

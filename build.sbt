@@ -5,7 +5,7 @@ enablePlugins(PackPlugin)
 name := "MGB-SMap"
 
 packMain := Map("MGB-SMap"->"org.telecomsudparis.smap.SMapServiceServer")
-packJvmOpts := Map("MGB-SMap" -> Seq("-Xmx4096m"))
+packJvmOpts := Map("MGB-SMap" -> Seq("-Xmx8g"))
 
 organization := "org.telecomsudparis.smap"
 version := "0.1-SNAPSHOT"
