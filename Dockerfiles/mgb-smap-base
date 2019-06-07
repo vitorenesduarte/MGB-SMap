@@ -1,0 +1,9 @@
+FROM mozilla/sbt
+
+MAINTAINER Vitor Enes <vitorenesduarte@gmail.com>
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y \
+    iputils-ping \
+    maven \
+    build-essential
