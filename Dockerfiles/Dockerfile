@@ -23,8 +23,8 @@ ADD https://api.github.com/repos/vitorenesduarte/VCD-java-client/git/refs/heads/
 RUN git clone https://github.com/vitorenesduarte/VCD-java-client
 RUN mvn -f VCD-java-client clean install -DskipTests
 
-ADD https://api.github.com/repos/tuanir/MGB-SMap/git/refs/heads/pure_functions mgb-smap-version.json
-RUN git clone -b pure_functions https://github.com/tuanir/MGB-SMap.git
+ADD https://api.github.com/repos/tuanir/MGB-SMap/git/refs/heads/master mgb-smap-version.json
+RUN git clone -b master https://github.com/tuanir/MGB-SMap.git
 RUN make -C MGB-SMap compile jars
 
 WORKDIR /app/MGB-SMap
