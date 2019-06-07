@@ -45,10 +45,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   //var javaSocket = DummySocket.create(javaClientConfig)
 
   var mapCopy = MTreeMap[String, MMap[String, String]]()
-  var pendingMap = CTrieMap[CallerId, Promise[Boolean]]()
   var promiseMap = CTrieMap[OperationUniqueId, PromiseResults]()
   var queue = new LinkedBlockingQueue[Message]()
-  var localReadsQueue = new LinkedBlockingQueue[MapCommand]()
 
   @volatile var stop = false
 
@@ -58,7 +56,6 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
 
   var receiveMessages: Thread = new Thread(() => receiveLoop)
   var consume: Thread = new Thread(()=> consumeLocally)
-  var localReading: Thread = new Thread(()=> doLocalReading)
   var pool: ExecutorService = Executors.newFixedThreadPool(3)
 
   // FIXME read concurrently ?
@@ -117,38 +114,9 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     }
   }
 
-  /**
-    *  Thread for processing local read requests, calls applyOperation with hardcoded DELIVERED status
-    */
-  def doLocalReading(): Unit = {
-    try {
-      var readList = ListBuffer[MapCommand]().asJava
-      while (!stop) {
-        val readOperation = localReadsQueue.take()
-        readList.add(readOperation)
-        localReadsQueue.drainTo(readList)
-
-        lock.readLock().lock()
-        processReads.time {
-          //Since we're doing local reads I assume DELIVERED msgStatus
-          readList.asScala.foreach(rOp => applyOperation(rOp)(MessageSet.Status.DELIVERED))
-        }
-        lock.readLock().unlock()
-        readList.clear()
-      }
-    } catch {
-      case ex: InterruptedException =>
-        logger.warning("SMapServer LocalRead Consume Loop Interrupted at: " ++ serverId)
-      case ex: Exception =>
-        throw new RuntimeException()
-    }
-  }
-
   def serverInit(): Unit = {
     pool.execute(receiveMessages)
     pool.execute(consume)
-    if(localReads)
-      pool.execute(localReading)
   }
 
   def serverClose(): Unit = {
@@ -177,16 +145,6 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     }
   }
 
-
-  def ringBellPending(cid: CallerId): Unit = {
-    if(pendingMap isDefinedAt cid) {
-      pendingMap(cid) success true
-      pendingMap -= cid
-      if (verbose) logger.info("ring pending map" + pendingMap)
-    }
-  }
-
-
   def applyOperation(deliveredOperation: MapCommand)(msgSetStatus: MessageSet.Status): Unit = {
     import org.telecomsudparis.smap.MapCommand.OperationType._
     import org.imdea.vcd.pb.Proto.MessageSet.Status
@@ -200,98 +158,78 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       logger.info(deliveredOperation.operationUuid + " -> " + msgSetStatus)
     }
 
-    deliveredOperation.operationType match {
-      case INSERT =>
-        if(msgSetStatus == Status.COMMIT){
-          ringBell(uuid, ResultsCollection())
-        } else {
+    if(msgSetStatus == Status.COMMIT){
+      if (verbose) {
+        logger.info("ignoring commit notification of " + deliveredOperation.operationUuid)
+      }
+      // ignore
+    } else {
+      deliveredOperation.operationType match {
+        case INSERT =>
           //opItem is immutable.Map, doing a conversion.
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
-          if(msgSetStatus == Status.DELIVERED){
-            mapCopy += (opItemKey -> mutableFieldsMap)
-            ringBellPending(cid)
-          } else {
-            throw new RuntimeException()
-          }
-        }
+          mapCopy += (opItemKey -> mutableFieldsMap)
+          ringBell(uuid, ResultsCollection())
 
-      case UPDATE =>
-        if(msgSetStatus == Status.COMMIT){
-          processUpdateCommit.time {
-            ringBell(uuid, ResultsCollection())
-          }
-        } else {
+        case UPDATE =>
           val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
           processUpdateDelivered.time {
-            if (msgSetStatus == Status.DELIVERED) {
-              if (mapCopy isDefinedAt opItemKey) {
-                mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
-              } else {
-                mapCopy += (opItemKey -> mutableFieldsMap)
-              }
-              ringBellPending(cid)
+            if (mapCopy isDefinedAt opItemKey) {
+              mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
             } else {
-              throw new RuntimeException()
+              mapCopy += (opItemKey -> mutableFieldsMap)
             }
+            ringBell(uuid, ResultsCollection())
           }
-        }
 
-      case DELETE =>
-        if(msgSetStatus == Status.COMMIT){
+        case DELETE =>
+          mapCopy -= opItemKey
           ringBell(uuid, ResultsCollection())
-        } else {
-          if(msgSetStatus == Status.DELIVERED){
-            mapCopy -= opItemKey
-            ringBellPending(cid)
-          } else {
-            throw new RuntimeException()
-          }
-        }
 
-      case GET =>
-        processOneRead.time {
-          if ((msgSetStatus == Status.DELIVERED) && (promiseMap isDefinedAt uuid)) {
-            val result: ResultsCollection = {
-              if (mapCopy isDefinedAt opItemKey) {
-                val getItem = Item(key = opItemKey, fields = mapCopy(opItemKey).toMap)
-                ResultsCollection(Seq(getItem))
-              } else {
-                ResultsCollection(Seq(Item(key = opItemKey)))
-              }
-            }
-            ringBell(uuid, result)
-          }
-        }
-
-      case SCAN =>
-        processOneScan.time {
-          if ((msgSetStatus == Status.DELIVERED) && (promiseMap isDefinedAt uuid)) {
-            var seqResults: Seq[Item] = Seq()
-            if (mapCopy isDefinedAt deliveredOperation.startKey) {
-              val mapCopyScan = scanSlicing.time {
-                (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount)
-              }
-              for (elem <- mapCopyScan.values) {
-                val tempResult: MMap[String, String] = MMap()
-                //From YCSB, if fields set is empty must read all fields
-                val keySet = if (opItem.fields.isEmpty) mapCopy(deliveredOperation.startKey).keys else opItem.fields.keys
-                for (fieldKey <- keySet) {
-                  if (elem isDefinedAt fieldKey)
-                    tempResult += (fieldKey -> elem(fieldKey))
-                  //else should do tempResult += (fieldKey -> defaultEmptyValue)
+        case GET =>
+          processOneRead.time {
+            if (promiseMap isDefinedAt uuid) {
+              val result: ResultsCollection = {
+                if (mapCopy isDefinedAt opItemKey) {
+                  val getItem = Item(key = opItemKey, fields = mapCopy(opItemKey).toMap)
+                  ResultsCollection(Seq(getItem))
+                } else {
+                  ResultsCollection(Seq(Item(key = opItemKey)))
                 }
-                val tempItem = Item(fields = tempResult.toMap)
-                seqResults :+= tempItem
               }
+              ringBell(uuid, result)
             }
-            //Returning empty sequence of items in case of nondefined startingKey
-            ringBell(uuid, ResultsCollection(seqResults))
           }
-        }
 
-      case _ => println("Unknown Operation")
+        // case SCAN =>
+        //   processOneScan.time {
+        //     if ((msgSetStatus == Status.DELIVERED) && (promiseMap isDefinedAt uuid)) {
+        //       var seqResults: Seq[Item] = Seq()
+        //       if (mapCopy isDefinedAt deliveredOperation.startKey) {
+        //         val mapCopyScan = scanSlicing.time {
+        //           (mapCopy from deliveredOperation.startKey).slice(0, deliveredOperation.recordcount)
+        //         }
+        //         for (elem <- mapCopyScan.values) {
+        //           val tempResult: MMap[String, String] = MMap()
+        //           //From YCSB, if fields set is empty must read all fields
+        //           val keySet = if (opItem.fields.isEmpty) mapCopy(deliveredOperation.startKey).keys else opItem.fields.keys
+        //           for (fieldKey <- keySet) {
+        //             if (elem isDefinedAt fieldKey)
+        //               tempResult += (fieldKey -> elem(fieldKey))
+        //             //else should do tempResult += (fieldKey -> defaultEmptyValue)
+        //           }
+        //           val tempItem = Item(fields = tempResult.toMap)
+        //           seqResults :+= tempItem
+        //         }
+        //       }
+        //       //Returning empty sequence of items in case of nondefined startingKey
+        //       ringBell(uuid, ResultsCollection(seqResults))
+        //     }
+        //   }
+
+        case _ => println("Unknown Operation")
+      }
     }
-
   }
 
   /*

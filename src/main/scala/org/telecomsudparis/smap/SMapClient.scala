@@ -44,102 +44,26 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         logger.info(opUuid + " -> START")
       }
 
-      // To achieve sequential consistency, reads must wait pending writes.
-       if (mapServer.localReads) {
-         if (isRead) {
-           waitPendings(callerUuid)
-         } else {
-           val writePromise = Promise[Boolean]()
-           if (verbose) {
-             logger.fine("add pending map" + callerUuid)
-           }
-           mapServer.pendingMap += (callerUuid -> writePromise)
-         }
-       }
+      val pro = PromiseResults(Promise[ResultsCollection]())
+      val fut = pro.pResult.future
 
-      //Quick hack to test performance.
-      if(isRead && mapServer.localReads) {
-        if(operation.operationType.isGet) {
-          timeSingleRead.time {
-            var localReadsResult = new ResultsCollection()
-            mapServer.lock.readLock().lock()
-            localReadsResult = {
-              if (mapServer.mapCopy isDefinedAt operation.getItem.key) {
-                val getItem = Item(key = operation.getItem.key, fields = mapServer.mapCopy(operation.getItem.key).toMap)
-                ResultsCollection(Seq(getItem))
-              } else {
-                ResultsCollection(Seq(Item(key = operation.getItem.key)))
-              }
-            }
-            mapServer.lock.readLock().unlock()
-            response = localReadsResult
-          }
-        }
-        if(operation.operationType.isScan) {
-          timeSingleScan.time {
-            var seqResults: Seq[Item] = Seq()
-            val opItem = operation.getItem
-            //FIXME: Can I release the lock earlier?
-            mapServer.lock.readLock().lock()
-            if (mapServer.mapCopy isDefinedAt operation.startKey) {
-              val mapCopyScan = (mapServer.mapCopy from operation.startKey).slice(0, operation.recordcount)
+      mapServer.promiseMap += (opUuid -> pro)
 
-              for(elem <- mapCopyScan.values){
-                seqResults :+= Item(fields = elem.toMap)
-              }
-              /*
-              for (elem <- mapCopyScan.values) {
-                val tempResult: MMap[String, String] = MMap()
-                //From YCSB, if fields set is empty must read all fields
-                val keySet = if (opItem.fields.isEmpty) mapServer.mapCopy(operation.startKey).keys else opItem.fields.keys
-                for (fieldKey <- keySet) {
-                  if (elem isDefinedAt fieldKey)
-                    tempResult += (fieldKey -> elem(fieldKey))
-                  //else should do tempResult += (fieldKey -> defaultEmptyValue)
-                }
-                val tempItem = Item(fields = tempResult.toMap)
-                seqResults :+= tempItem
-              }
-              */
-            }
-            mapServer.lock.readLock().unlock()
-            response = ResultsCollection(seqResults)
-          }
-        }
-      } else {
-        val pro = PromiseResults(Promise[ResultsCollection]())
-        val fut = pro.pResult.future
+      val msgMGB = SMapClient.generateMsg(operation,clientId)
 
-        mapServer.promiseMap += (opUuid -> pro)
+      if(verbose) logger.fine("queuing " + msgMGB)
 
-        val msgMGB = SMapClient.generateMsg(operation,clientId)
+      mapServer.queue.put(msgMGB)
 
-        if(verbose) logger.fine("queuing " + msgMGB)
+      response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
 
-        mapServer.queue.put(msgMGB)
-
-        response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
-
-        mapServer.promiseMap -= opUuid
-      }
+      mapServer.promiseMap -= opUuid
     } catch {
       case e: Exception => e.printStackTrace()
     }
 
     response
   }
-
-
-  def waitPendings(pending: CallerId): Unit = {
-    mapServer.pendingMap.get(pending) match {
-      case Some(promise: Promise[Boolean]) =>
-        if(verbose) logger.fine("wait pending map" + pending)
-        waitPendingsTime.time(Await.result(promise.future, Duration.Inf))
-      case _  =>
-    }
-  }
-
-
 }
 
 import org.imdea.vcd.pb.Proto._
