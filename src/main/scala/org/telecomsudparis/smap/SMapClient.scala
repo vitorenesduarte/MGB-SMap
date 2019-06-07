@@ -113,6 +113,9 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
         mapServer.promiseMap += (opUuid -> pro)
 
         val msgMGB = SMapClient.generateMsg(operation,clientId)
+
+        if(verbose) logger.fine("queuing " + msgMGB)
+
         mapServer.queue.put(msgMGB)
 
         response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
