@@ -6,3 +6,6 @@ target/resolution-cache/
 target/classes/
 project/project/
 project/target/
+ensime-langserver.log
+pc.stdout.log
+target/pack/

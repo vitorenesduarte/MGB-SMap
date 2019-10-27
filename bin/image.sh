@@ -11,9 +11,9 @@ IMAGE=vitorenesduarte/mgb-smap:${TAG}
 DOCKERFILE=${DIR}/../Dockerfiles/mgb-smap
 
 # build image
-# --no-cache \
 docker build \
-  -t "${IMAGE}" -f "${DOCKERFILE}" .
+    --no-cache \
+    -t "${IMAGE}" -f "${DOCKERFILE}" .
 
 
 # push image

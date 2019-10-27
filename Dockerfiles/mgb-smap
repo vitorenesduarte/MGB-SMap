@@ -2,12 +2,6 @@ FROM vitorenesduarte/mgb-smap-base
 
 MAINTAINER Vitor Enes <vitorenesduarte@gmail.com>
 
-WORKDIR /app
-RUN apt-get update && apt-get install -y \
-    iputils-ping \
-    maven \
-    build-essential
-
 ADD https://api.github.com/repos/vitorenesduarte/VCD-java-client/git/refs/heads/master vcd-java-client-version.json
 RUN git clone https://github.com/vitorenesduarte/VCD-java-client
 RUN mvn -f VCD-java-client clean install -DskipTests
