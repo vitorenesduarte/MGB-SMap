@@ -8,14 +8,14 @@ import scala.concurrent._
 //import concurrent.ExecutionContext.Implicits.global._
 import java.util.concurrent.{ExecutorService, Executors}
 
-import scala.collection.concurrent.{TrieMap => CTrieMap}
 import scala.concurrent._
 import scala.concurrent.duration._
-import scala.collection.mutable.{TreeMap => MTreeMap}
-import scala.collection.mutable.{Map => MMap}
+import scala.collection.mutable.HashMap
+import scala.collection.mutable.Map
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ConcurrentHashMap
 import java.io.IOException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
@@ -44,8 +44,8 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
   var javaSocket = if(staticConnection) Socket.createStatic(javaClientConfig, retries) else Socket.create(javaClientConfig, retries)
   //var javaSocket = DummySocket.create(javaClientConfig)
 
-  var mapCopy = MTreeMap[String, MMap[String, String]]()
-  var promiseMap = CTrieMap[OperationUniqueId, PromiseResults]()
+  var map = HashMap[String, Map[String, String]]()
+  var promiseMap = new ConcurrentHashMap[OperationUniqueId, PromiseResults]()
   var queue = new LinkedBlockingQueue[Message]()
 
   @volatile var stop = false
@@ -132,16 +132,14 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
     val msgSetAsList = mset.getMessagesList.asScala
     val unmarshalledSet = msgSetAsList map (msg => SMapServer.unmarshallMGBMsg(msg))
 
-    lock.writeLock().lock()
     unmarshalledSet foreach (e => applyOperation(e)(mset.getStatus))
-    lock.writeLock().unlock()
-
   }
 
 
   def ringBell(uid: OperationUniqueId, pr: ResultsCollection): Unit = {
-    if(promiseMap isDefinedAt uid) {
-      promiseMap(uid).pResult success pr
+    val promise = promiseMap.get(uid)
+    if(promise != null) {
+      promise.pResult success pr
     }
   }
 
@@ -167,38 +165,44 @@ class SMapServer(var localReads: Boolean, var verbose: Boolean, var config: Arra
       deliveredOperation.operationType match {
         case INSERT =>
           //opItem is immutable.Map, doing a conversion.
-          val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
-          mapCopy += (opItemKey -> mutableFieldsMap)
+          val mutableFieldsMap: Map[String, String] = Map() ++ opItem.fields
+          lock.writeLock().lock()
+          map += (opItemKey -> mutableFieldsMap)
+          lock.writeLock().unlock()
           ringBell(uuid, ResultsCollection())
 
         case UPDATE =>
-          val mutableFieldsMap: MMap[String, String] = MMap() ++ opItem.fields
+          val mutableFieldsMap: Map[String, String] = Map() ++ opItem.fields
           processUpdateDelivered.time {
-            if (mapCopy isDefinedAt opItemKey) {
-              mutableFieldsMap.foreach(f => mapCopy(opItemKey).update(f._1, f._2))
+            lock.writeLock().lock()
+            if (map isDefinedAt opItemKey) {
+              mutableFieldsMap.foreach(f => map(opItemKey).update(f._1, f._2))
             } else {
-              mapCopy += (opItemKey -> mutableFieldsMap)
+              map += (opItemKey -> mutableFieldsMap)
             }
+            lock.writeLock().unlock()
             ringBell(uuid, ResultsCollection())
           }
 
         case DELETE =>
-          mapCopy -= opItemKey
+          lock.writeLock().lock()
+          map -= opItemKey
+          lock.writeLock().unlock()
           ringBell(uuid, ResultsCollection())
 
         case GET =>
           processOneRead.time {
-            if (promiseMap isDefinedAt uuid) {
-              val result: ResultsCollection = {
-                if (mapCopy isDefinedAt opItemKey) {
-                  val getItem = Item(key = opItemKey, fields = mapCopy(opItemKey).toMap)
-                  ResultsCollection(Seq(getItem))
-                } else {
-                  ResultsCollection(Seq(Item(key = opItemKey)))
-                }
+            lock.readLock().lock()
+            val result: ResultsCollection = {
+              if (map isDefinedAt opItemKey) {
+                val getItem = Item(key = opItemKey, fields = map(opItemKey).toMap)
+                ResultsCollection(Seq(getItem))
+              } else {
+                ResultsCollection(Seq(Item(key = opItemKey)))
               }
-              ringBell(uuid, result)
             }
+            lock.readLock().unlock()
+            ringBell(uuid, result)
           }
 
         // case SCAN =>

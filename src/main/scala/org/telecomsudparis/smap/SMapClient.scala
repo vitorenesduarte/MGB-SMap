@@ -47,7 +47,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
       val pro = PromiseResults(Promise[ResultsCollection]())
       val fut = pro.pResult.future
 
-      mapServer.promiseMap += (opUuid -> pro)
+      mapServer.promiseMap.put(opUuid, pro)
 
       val msgMGB = SMapClient.generateMsg(operation,clientId)
 
@@ -57,7 +57,7 @@ class SMapClient(var verbose: Boolean, mapServer: SMapServer) extends Instrument
 
       response = promiseMapTimeWrite.time(Await.result(fut, Duration.Inf))
 
-      mapServer.promiseMap -= opUuid
+      mapServer.promiseMap.remove(opUuid)
     } catch {
       case e: Exception => e.printStackTrace()
     }
